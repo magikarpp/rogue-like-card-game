@@ -1,0 +1,68 @@
+
+.center {
+  text-align: center;
+}
+
+.card {
+  padding: 2%;
+  max-width: 10%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.enemy {
+  padding: 5%;
+  max-width:10%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+#info {
+  display: inline-block;
+  border: 1px solid black;
+  height: 500px;
+  width: 25%;
+  vertical-align: top;
+}
+
+#board {
+  display: inline-block;
+  position: relative;
+  border: 1px solid black;
+  height: 500px;
+  width: 40%;
+}
+
+#enemies {
+
+}
+
+#player {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+#enemy-health {
+  margin-left: 5%;
+  margin-right: 5%;
+  background-color: green;
+}
+
+#player-health {
+  margin-left: 35%;
+  margin-right: 35%;
+  background-color: green;
+}
+
+#player-stamina {
+  margin-left: 35%;
+  margin-right: 35%;
+  background-color: orange;
+}
+
+#player-mana {
+  margin-left: 35%;
+  margin-right: 35%;
+  background-color: lightblue;
+}
