@@ -43,24 +43,6 @@
   width: 100%;
 }
 
-#enemy-health {
-  margin-left: 5%;
-  margin-right: 5%;
-  background-color: green;
-}
-
-#player-health {
-  margin-left: 35%;
-  margin-right: 35%;
-  background-color: green;
-}
-
-#player-stamina {
-  margin-left: 35%;
-  margin-right: 35%;
-  background-color: orange;
-}
-
 #player-mana {
   margin-left: 35%;
   margin-right: 35%;
