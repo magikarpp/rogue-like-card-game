@@ -375,11 +375,11 @@ function addText(text){
   newP.innerHTML = text;
   document.getElementById("info").prepend(newP);
   for(let i = 0; i < document.getElementById("info").childElementCount; i++){
-    let color = i * 31;
+    let color = i * 22;
     document.getElementById("info").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
   }
-  if(document.getElementById("info").childElementCount > 12){
-    for(let i = 0; i < document.getElementById("info").childElementCount - 12; i++){
+  if(document.getElementById("info").childElementCount > 11){
+    for(let i = 0; i < document.getElementById("info").childElementCount - 11; i++){
       removeElement(document.getElementById("info").lastElementChild);
     }
   }
