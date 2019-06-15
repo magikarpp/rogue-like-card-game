@@ -3,8 +3,6 @@ let isBattle = false;
 let isActive = false;
 let battleStep = 0;
 
-let pressingDown = false;
-
 let player;
 let deck = [];
 let tempDeck = [];
@@ -12,8 +10,7 @@ let current_cards = [];
 let active_card;
 let enemies = [];
 
-document.addEventListener("keydown", buttonPress);
-document.addEventListener("keyup", buttonRelease);
+document.addEventListener("keyup", buttonPress);
 
 document.getElementById("warrior").addEventListener("click", start);
 document.getElementById("rogue").addEventListener("click", start);
@@ -37,7 +34,7 @@ function start(){
   initDeck();
 
   //FROM HERE DOWN IS TEMPORARY TESTING
-  let tempEnemy = new Enemy(1, "Goblin", "normal", 50, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
+  let tempEnemy = new Enemy(1, "Goblin", "normal", 10, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
   let tempCard = new Card(tempEnemy, "Rest", "normal", 0, 0, 0, 0, "Recover stamina and mana.", ["(you) rests it's eyes.", "(you) feels well rested.", "(enemy) looks confused as (you) sleeps."]);
   tempCard.effect = function(){
     this.user.currentHealth += 5;
@@ -58,7 +55,7 @@ function start(){
 
   tempEnemy.cards = tempCards;
   enemies.push(tempEnemy);
-  let tempEnemy2 = new Enemy(1, "Goblin", "normal", 50, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
+  let tempEnemy2 = new Enemy(1, "Goblin", "normal", 10, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
   tempEnemy2.cards = tempCards;
   enemies.push(tempEnemy2);
 
@@ -124,9 +121,19 @@ function battle(enemies){
       isActive = true;
 
       //ButtonPress activation is happening here;
-
+      let temp = false
       for(let i = enemies.length - 1; i >= 0; i--){
-        if(enemies[i].currentHealth <= 0) enemies.splice(i, 1);
+        if(enemies[i].currentHealth <= 0){
+          removeElement(document.getElementById("enemy" + i));
+          enemies.splice(i, 1);
+          temp = true;
+        }
+      }
+      if(temp){
+        for(let j = 1; j < document.getElementById("enemies").childNodes.length; j++){
+          document.getElementById("enemies").childNodes[j].id = "enemy" + (j - 1);
+          document.getElementById("enemies").childNodes[j].childNodes[1].id = "enemy-health" + (j - 1);
+        }
       }
       setTimeout(loop, 0);
     }
@@ -140,35 +147,25 @@ function endBattle(result){
 
 function buttonPress(event){
   //TODO: implement clicks.
-  if(pressingDown == false){
-    if(isActive){
-      pressingDown = true;
-      if(isBattle){
-        if(battleStep == 0){
-          let size = current_cards.length;
-          if(event.key > 0 && event.key < size + 1){
-            console.log("Card Chosen");
-            active_card = event.key - 1;
-            // document.getElementById("c" + (event.key - 1)).style.border = "1px solid purple";
-            activateCard(event.key - 1);
-          }
+  if(isActive){
+    if(isBattle){
+      if(battleStep == 0){
+        let size = current_cards.length;
+        if(event.key > 0 && event.key < size + 1){
+          active_card = event.key - 1;
+          document.getElementById("c" + (event.key - 1)).style.border = "1px solid purple";
+          activateCard(event.key - 1);
         }
-        else if(battleStep == 1){
-          let size = enemies.length;
-          if(event.key > 0 && event.key < size + 1){
-            console.log("Target Chosen");
-            // document.getElementById("c" + (event.key - 1)).style.border = "1px solid purple";
-            activateCard(active_card, event.key - 1);
-            battleStep = 0;
-          }
+      }
+      else if(battleStep == 1){
+        let size = enemies.length;
+        if(event.key > 0 && event.key < size + 1){
+          activateCard(active_card, event.key - 1);
+          battleStep = 0;
         }
       }
     }
   }
-}
-
-function buttonRelease(event){
-  pressingDown = false;
 }
 
 function activateCard(cardNum, target){
@@ -183,6 +180,7 @@ function activateCard(cardNum, target){
         setCardAt(cardNum);
       }
       useCard(eCard, pCard, player);
+      document.getElementById("c" + cardNum).style.border = "none";
 
     } else{
       loop();
@@ -192,7 +190,7 @@ function activateCard(cardNum, target){
         if(i == enemies.length - 1) text += "(" + (i + 1) + ")" + enemies[i].name + ".";
         else text += "(" + (i + 1)+ ")" + enemies[i].name + ", ";
       }
-      addText("");
+      addText("&nbsp");
       addText(text);
 
       function loop(){
@@ -210,6 +208,7 @@ function activateCard(cardNum, target){
       eCard = enemies[i].cards[Math.floor(Math.random() * enemies[i].cards.length)];
       useCard(eCard, pCard, player);
     }
+    document.getElementById("c" + cardNum).style.border = "none";
     battleStep = 0;
   }
 
