@@ -9,6 +9,7 @@ let player;
 let deck = [];
 let tempDeck = [];
 let current_cards = [];
+let active_card;
 let enemies = [];
 
 document.addEventListener("keydown", buttonPress);
@@ -57,6 +58,9 @@ function start(){
 
   tempEnemy.cards = tempCards;
   enemies.push(tempEnemy);
+  let tempEnemy2 = new Enemy(1, "Goblin", "normal", 50, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
+  tempEnemy2.cards = tempCards;
+  enemies.push(tempEnemy2);
 
   startBattle(enemies);
 }
@@ -118,7 +122,9 @@ function battle(enemies){
       endBattle("win");
     } else{
       isActive = true;
+
       //ButtonPress activation is happening here;
+
       for(let i = enemies.length - 1; i >= 0; i--){
         if(enemies[i].currentHealth <= 0) enemies.splice(i, 1);
       }
@@ -141,12 +147,20 @@ function buttonPress(event){
         if(battleStep == 0){
           let size = current_cards.length;
           if(event.key > 0 && event.key < size + 1){
+            console.log("Card Chosen");
+            active_card = event.key - 1;
             // document.getElementById("c" + (event.key - 1)).style.border = "1px solid purple";
             activateCard(event.key - 1);
           }
         }
         else if(battleStep == 1){
-
+          let size = enemies.length;
+          if(event.key > 0 && event.key < size + 1){
+            console.log("Target Chosen");
+            // document.getElementById("c" + (event.key - 1)).style.border = "1px solid purple";
+            activateCard(active_card, event.key - 1);
+            battleStep = 0;
+          }
         }
       }
     }
@@ -157,20 +171,46 @@ function buttonRelease(event){
   pressingDown = false;
 }
 
-function activateCard(cardNum){
+function activateCard(cardNum, target){
   isActive = false;
 
-  if(enemies.length == 1){
-    let eCard = enemies[0].cards[Math.floor(Math.random() * enemies[0].cards.length)];
+  if(battleStep == 0){
+    if(current_cards[cardNum].attack == 0 || enemies.length == 1){
+      let eCard = enemies[0].cards[Math.floor(Math.random() * enemies[0].cards.length)];
+      let pCard = current_cards[cardNum];
+
+      if(useCard(pCard, eCard, enemies[0])){
+        setCardAt(cardNum);
+      }
+      useCard(eCard, pCard, player);
+
+    } else{
+      loop();
+      battleStep = 1;
+      let text = "Choose Targets for " + current_cards[cardNum].name + ": ";
+      for(let i = 0; i < enemies.length; i++){
+        if(i == enemies.length - 1) text += "(" + (i + 1) + ")" + enemies[i].name + ".";
+        else text += "(" + (i + 1)+ ")" + enemies[i].name + ", ";
+      }
+      addText("");
+      addText(text);
+
+      function loop(){
+        if(battleStep == 1) setTimeout(loop, 0);
+      }
+    }
+  } else if(battleStep == 1){
+    let eCard = enemies[target].cards[Math.floor(Math.random() * enemies[target].cards.length)];
     let pCard = current_cards[cardNum];
 
-    if(useCard(pCard, eCard, enemies[0])){
+    if(useCard(pCard, eCard, enemies[target])){
       setCardAt(cardNum);
     }
-    useCard(eCard, pCard, player);
-
-  } else{
-
+    for(let i = 0; i < enemies.length; i++){
+      eCard = enemies[i].cards[Math.floor(Math.random() * enemies[i].cards.length)];
+      useCard(eCard, pCard, player);
+    }
+    battleStep = 0;
   }
 
   // document.getElementById("c" + cardNum).style.border = "";
@@ -189,14 +229,8 @@ function useCard(uCard, tCard, target){
     uCard.user.currentMana -= uCard.mana;
 
     uCard.effect();
-    console.log("uCard.attack = " + uCard.attack);
-    console.log("ucard.user.currentAttack = " + uCard.user.currentAttack);
-    console.log("tCard.defense = " + tCard.defense);
-    console.log("target.currentDefense = " + target.currentDefense);
-    console.log("(uCard.attack + uCard.user.currentAttack) - (tCard.defense + target.currentDefense)");
     let damage = (uCard.attack + uCard.user.currentAttack) - (tCard.defense + target.currentDefense);
     if(uCard.attack == 0 || damage < 0) damage = 0;
-    console.log(uCard.user.name + " uses " + uCard.name + " to hit " + target.name + " who has " + target.currentHealth + " health for " + damage + " damage.");
     let text = uCard.speech().replace(/\(you\)/g, uCard.user.name).replace(/\(enemy\)/, target.name).replace(/\(damage\)/, damage);
     addText(text);
     target.currentHealth -= damage;
@@ -365,6 +399,7 @@ function initDeck(){
 
 function gameOver(){
   console.log("Game Over");
+  clearText();
   isBattle = false;
   isActive = false;
   isStart = false;
@@ -375,13 +410,19 @@ function addText(text){
   newP.innerHTML = text;
   document.getElementById("info").prepend(newP);
   for(let i = 0; i < document.getElementById("info").childElementCount; i++){
-    let color = i * 22;
+    let color = i * 18;
     document.getElementById("info").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
   }
   if(document.getElementById("info").childElementCount > 11){
     for(let i = 0; i < document.getElementById("info").childElementCount - 11; i++){
       removeElement(document.getElementById("info").lastElementChild);
     }
+  }
+}
+
+function clearText(){
+  for(let i = 0; i < document.getElementById("info").childElementCount; i++){
+    document.getElementById("info").children.item(i).innerHTML = "";
   }
 }
 
