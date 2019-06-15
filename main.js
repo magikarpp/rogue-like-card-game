@@ -141,7 +141,16 @@ function battle(enemies){
 }
 
 function endBattle(result){
+  //Cleanup Step
   isBattle = false;
+
+  tempDeck = [];
+  current_cards = [];
+
+  for(let i = 0; i < player.slots; i++){
+    removeElement(document.getElementById("c" + i));
+  }
+
   gameOver();
 }
 
@@ -176,6 +185,8 @@ function activateCard(cardNum, target){
       let eCard = enemies[0].cards[Math.floor(Math.random() * enemies[0].cards.length)];
       let pCard = current_cards[cardNum];
 
+      addText("&nbsp");
+
       if(useCard(pCard, eCard, enemies[0])){
         setCardAt(cardNum);
       }
@@ -190,17 +201,19 @@ function activateCard(cardNum, target){
         if(i == enemies.length - 1) text += "(" + (i + 1) + ")" + enemies[i].name + ".";
         else text += "(" + (i + 1)+ ")" + enemies[i].name + ", ";
       }
-      addText("&nbsp");
       addText(text);
 
       function loop(){
         if(battleStep == 1) setTimeout(loop, 0);
       }
+
     }
   } else if(battleStep == 1){
     let eCard = enemies[target].cards[Math.floor(Math.random() * enemies[target].cards.length)];
     let pCard = current_cards[cardNum];
 
+    addText("&nbsp");
+    
     if(useCard(pCard, eCard, enemies[target])){
       setCardAt(cardNum);
     }
@@ -407,21 +420,21 @@ function gameOver(){
 function addText(text){
   let newP = document.createElement("p");
   newP.innerHTML = text;
-  document.getElementById("info").prepend(newP);
-  for(let i = 0; i < document.getElementById("info").childElementCount; i++){
+  document.getElementById("text").prepend(newP);
+  for(let i = 0; i < document.getElementById("text").childElementCount; i++){
     let color = i * 18;
-    document.getElementById("info").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
+    document.getElementById("text").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
   }
-  if(document.getElementById("info").childElementCount > 11){
-    for(let i = 0; i < document.getElementById("info").childElementCount - 11; i++){
-      removeElement(document.getElementById("info").lastElementChild);
+  if(document.getElementById("text").childElementCount > 11){
+    for(let i = 0; i < document.getElementById("text").childElementCount - 11; i++){
+      removeElement(document.getElementById("text").lastElementChild);
     }
   }
 }
 
 function clearText(){
-  for(let i = 0; i < document.getElementById("info").childElementCount; i++){
-    document.getElementById("info").children.item(i).innerHTML = "";
+  for(let i = 0; i < document.getElementById("text").childElementCount; i++){
+    document.getElementById("text").children.item(i).innerHTML = "";
   }
 }
 
