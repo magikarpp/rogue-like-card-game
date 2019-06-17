@@ -3,36 +3,47 @@ let isBattle = false;
 let isActive = false;
 let battleStep = 0;
 
+let current_floor = 1;
+let counter = 0;
+let gen_step = 0;
+let options = 0;
+
 let player;
+let p_name = "";
 let deck = [];
 let tempDeck = [];
 let current_cards = [];
 let active_card;
 let enemies = [];
 
-document.addEventListener("keyup", buttonPress);
-
-document.getElementById("warrior").addEventListener("click", start);
-document.getElementById("rogue").addEventListener("click", start);
-document.getElementById("mage").addEventListener("click", start);
-
 initialize();
 
-function start(){
-  document.getElementById("game").style.display = "block";
-  document.getElementById("start-screen").style.display = "none";
-  isStart = true;
-  player = new Character(this.id);
+function initialize(){
+  document.addEventListener("keyup", buttonPress);
+  
+  document.getElementById("characters").style.display = "none";
+  document.getElementById("cards").style.display = "none";
+  document.getElementById("info").style.visibility = "hidden";
+  document.getElementById("deck-list").style.display = "none";
 
-  //Player Specific Cards
-  if(player.name == "Warrior"){
-    for(let i = 0; i < 3; i++){
-      deck.push(new Card(player, "Heavy Attack", "normal", 10, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]));
+  document.getElementById("deck-list").onclick = function(){
+    updateDeckModal();
+    document.getElementById("deck-modal").style.display = "block";
+  }
+  document.getElementsByClassName("close")[0].onclick = function(){
+    document.getElementById("deck-modal").style.display = "none";
+  }
+
+  window.onclick = function(event){
+    if(event.target == document.getElementById("deck-modal")){
+      document.getElementById("deck-modal").style.display = "none";
     }
   }
 
-  initDeck();
+  start();
+}
 
+function temporaryBattle(){
   //FROM HERE DOWN IS TEMPORARY TESTING
   let tempEnemy = new Enemy(1, "Goblin", "normal", 10, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
   let tempCard = new Card(tempEnemy, "Rest", "normal", 0, 0, 0, 0, "Recover stamina and mana.", ["(you) rests it's eyes.", "(you) feels well rested.", "(enemy) looks confused as (you) sleeps."]);
@@ -62,8 +73,147 @@ function start(){
   startBattle(enemies);
 }
 
+function FloorOne(){
+  document.getElementById("current-floor").innerHTML = "Floor " + 1;
+
+  setName();
+  loop();
+
+  function loop(){
+    if(gen_step == 2){
+      nextSeq();
+      return;
+    }
+
+    setTimeout(loop, 0);
+  }
+
+  function nextSeq(){
+    gen_step = 0;
+    clearText();
+    document.getElementById("info").style.visibility = "visible";
+    counter = 0;
+
+    loop();
+
+    function loop(){
+      if(counter == 300 || counter == 700) addText("...");
+      if(counter == 1100) addText("You feel a drop of damp water hit your face.");
+      if(counter == 1700) addText("You slowly open your eyes...");
+      if(counter == 2300) addText("Your eyes adjust to the dark, dreary chamber.");
+      if(counter == 2900) addText("Rats scurry behind spider webs as you lift yourself up.");
+      if(counter == 3700) addText("In front of you lies three weapons.");
+      if(counter == 4400) {
+        addText("&nbsp");
+        addText("(1) Sword, (2) Dagger, (3) Staff");
+        addText("<p style='color: purple;'>Pick a weapon:</p>");
+        options = 3;
+        loop1();
+
+        function loop1(){
+          isActive = true;
+          if(gen_step == 1){
+            player = new Character("warrior");
+            addText("&nbsp");
+            addText("You feel the weight of the sword heavy in your hands.");
+          } else if(gen_step == 2){
+            player = new Character("rogue");
+            addText("&nbsp");
+            addText("The dagger feels light as a feather in your hands.");
+          } else if(gen_step == 3){
+            player = new Character("mage");
+            addText("&nbsp");
+            addText("You sense a surge of mana flow from the staff.");
+          }
+          if(gen_step != 0){
+            initDeck();
+            gen_step = 0;
+            options = 0;
+            isActive = false;
+
+            document.getElementById("deck-list").style.display = "inline-block";
+
+            counter = 0;
+            loop2();
+
+            function loop2(){
+              if(counter == 1000){
+                addText("&nbsp");
+                addText("You look ahead and see two doors.");
+              }
+              if(counter == 1900) addText("One door has a sign - \"Tutorial\"; the other - \"Floor 1\".");
+              if(counter == 3000){
+                options = 2;
+                isActive = true;
+                addText("&nbsp");
+                addText("(1) Tutorial, (2) Floor 1");
+                addText("<p style='color: purple;'>Which do you take?<p>");
+              }
+              if(gen_step == 0){
+                counter++;
+                setTimeout(loop2, 0);
+              } else{
+                isActive = false;
+                options = 0;
+                if(gen_step == 1){
+                  console.log("Tutorial");
+                } else{
+                  temporaryBattle();
+                }
+              }
+            }
+          } else setTimeout(loop1, 0);
+        }
+      } else{
+        counter++;
+        setTimeout(loop, 0);
+      }
+    }
+  }
+}
+
+function setName(){
+  gen_step = 0;
+  loop();
+
+  function loop(){
+    if(gen_step == 0){
+      addText("&nbsp");
+      addText("<button id='name-button' class='button'>Submit</button>");
+      addText("<input id='name-input' type='text'></input>");
+      addText("What is your name?");
+      document.getElementById("name-button").addEventListener("click", submitName);
+      gen_step = 1;
+    }
+    if(gen_step == 2) return;
+
+    setTimeout(loop, 0);
+
+    function submitName(){
+      let proposed_name = document.getElementById("name-input").value;
+      if(proposed_name.replace(/\s/g, '').length && !proposed_name.includes("<") && proposed_name.length > 1 && proposed_name.length < 16){
+        p_name = proposed_name;
+        document.getElementById("info-name").innerHTML = p_name;
+        gen_step = 2;
+      } else {
+        document.getElementById("name-input").style.backgroundColor = "#ffe6e6";
+      }
+    }
+  }
+}
+
+function start(){
+  isStart = true;
+  FloorOne();
+}
+
 function startBattle(enemies){
   isBattle = true;
+
+  document.getElementById("characters").style.display = "block";
+  document.getElementById("cards").style.display = "block";
+  document.getElementById("info").style.visibility = "hidden";
+
   //Set enemies on board
   for(let i = 0; i < enemies.length; i++){
     let node = document.createElement("div");
@@ -143,7 +293,13 @@ function battle(enemies){
 function endBattle(result){
   //Cleanup Step
   isBattle = false;
+  isActive = false;
 
+  document.getElementById("characters").style.display = "none";
+  document.getElementById("cards").style.display = "none";
+  document.getElementById("info").style.visibility = "visible";
+
+  enemies = [];
   tempDeck = [];
   current_cards = [];
 
@@ -172,6 +328,11 @@ function buttonPress(event){
           activateCard(active_card, event.key - 1);
           battleStep = 0;
         }
+      }
+    }
+    if(!isBattle){
+      if(event.key > 0 && event.key < options + 1){
+        gen_step = event.key;
       }
     }
   }
@@ -213,7 +374,7 @@ function activateCard(cardNum, target){
     let pCard = current_cards[cardNum];
 
     addText("&nbsp");
-    
+
     if(useCard(pCard, eCard, enemies[target])){
       setCardAt(cardNum);
     }
@@ -241,7 +402,7 @@ function useCard(uCard, tCard, target){
     uCard.user.currentMana -= uCard.mana;
 
     uCard.effect();
-    let damage = (uCard.attack + uCard.user.currentAttack) - (tCard.defense + target.currentDefense);
+    let damage = (uCard.attack + Math.floor(Math.random() * uCard.user.currentAttack) - (tCard.defense + target.currentDefense));
     if(uCard.attack == 0 || damage < 0) damage = 0;
     let text = uCard.speech().replace(/\(you\)/g, uCard.user.name).replace(/\(enemy\)/, target.name).replace(/\(damage\)/, damage);
     addText(text);
@@ -292,15 +453,12 @@ function setCardAt(num){
   document.getElementById("c" + num + "-description").innerHTML = current_cards[num].description;
 }
 
-function initialize(){
-  document.getElementById("game").style.display = "none";
-}
-
-function Character(name){
+function Character(job){
   let tempCard;
 
-  if(name == "warrior"){
-    this.name = "Warrior";
+  if(job == "warrior"){
+    this.name = p_name;
+    this.job = "warrior";
     this.totalHealth = 150;
     this.currentHealth = this.totalHealth;
     this.totalAttack = 5;
@@ -314,8 +472,13 @@ function Character(name){
     this.slots = 3;
     this.status = [];
 
-  } else if(name == "rogue"){
-    this.name = "Rogue";
+    for(let i = 0; i < 3; i++){
+      deck.push(new Card(this, "Heavy Attack", "normal", 10, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]));
+    }
+
+  } else if(job == "rogue"){
+    this.name = p_name;
+    this.job = "rogue"
     this.totalHealth = 100;
     this.currentHealth = this.totalHealth;
     this.totalAttack = 3;
@@ -328,8 +491,9 @@ function Character(name){
     this.currentStamina = this.totalStamina;
     this.slots = 4;
     this.status = [];
-  } else if(name == "mage"){
-    this.name = "Mage";
+  } else if(job == "mage"){
+    this.name = p_name;
+    this.job = "mage";
     this.totalHealth = 75;
     this.currentHealth = this.totalHealth;
     this.totalAttack = 1;
@@ -382,21 +546,15 @@ function Card(cardUser, cardName, cardType, cardAttack, cardDefense, cardMana, c
 
 function initDeck(){
   for(let i = 0; i < 9; i++){
-    deck.push(new Card(player, "Attack", "normal", 5, 0, 0, 15, "A normal attack.", ["(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]));
+    deck.push(new Card(player, "Attack", "normal", 5, 0, 0, 15, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]));
   }
   for(let i = 0; i < 5; i++){
-    let tempCard = new Card(player, "Defense", "normal", 0, 3, 0, 10, "A normal defense. Recover slight stamina and mana.", ["(you) takes a defensive stance."]);
-    tempCard.effect = function(){
-      this.user.currentStamina += 25;
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.cuurentMana += 10;
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-    };
+    let tempCard = new Card(player, "Nothing", "normal", 0, 0, 0, 0, "Do nothing.", ["(you) takes a seat.", "(you) sits there quietly."]);
     deck.push(tempCard);
   }
 
   for(let i = 0; i < 5; i++){
-    let tempCard = new Card(player, "Rest", "normal", 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you)'s eyes close for just a second.", "(you) feels well rested.", "(enemy) looks confused as (you) sleeps."]);
+    let tempCard = new Card(player, "Rest", "normal", 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
     tempCard.effect = function(){
       this.user.currentHealth += 10;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
@@ -407,14 +565,6 @@ function initDeck(){
     };
     deck.push(tempCard);
   }
-}
-
-function gameOver(){
-  console.log("Game Over");
-  clearText();
-  isBattle = false;
-  isActive = false;
-  isStart = false;
 }
 
 function addText(text){
@@ -459,6 +609,14 @@ function checkStats(){
   document.getElementById("player-mana").style.marginLeft = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.marginRight = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.backgroundColor = "rgb(150, 235, 255)";
+}
+
+function gameOver(){
+  console.log("Game Over");
+  clearText();
+  isBattle = false;
+  isActive = false;
+  isStart = false;
 }
 
 //Set proportions for margin %

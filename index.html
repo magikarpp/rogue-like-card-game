@@ -4,15 +4,8 @@
 		<link href="main.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<h1 class="center">Climb The Tower!</h1>
+		<h1 class="center">&nbsp</h1>
 		<hr>
-
-    <div id="start-screen" class="center">
-      <br>
-      <button id="warrior">Warrior</button>
-      <button id="rogue">Rogue</button>
-      <button id="mage">Mage</button>
-    </div>
 
     <div id="game" class="center">
 			<div id="text">
@@ -25,7 +18,7 @@
 					</div>
 
 					<div class="center" id="player">
-						<p id="player-name">player</p>
+						<p id="player-name"></p>
 						<p id="player-health">&nbsp</p>
 						<p id="player-stamina">&nbsp</p>
 						<p id="player-mana">&nbsp</p>
@@ -35,13 +28,28 @@
 
       <div id="cards" class="center">
 
-        <div class="card" id="deck">
+        <div id="deck" class="card">
           <h5>&nbsp</h5>
-          <h1 id="deck-current">40</h1>
+          <h1 id="deck-current"></h1>
           <h5>&nbsp</h5>
         </div>
       </div>
+
+			<div id="info" class="center">
+				<p id="current-floor"></p>
+				<p id="info-name"></p>
+				<button id="deck-list" class="button">Deck List</button>
+			</div>
+
   </div>
+
+	<!-- Modal -->
+	<div id="deck-modal" class="modal">
+	  <div class="modal-content">
+	    <span class="close">&times;</span>
+	    <p>Some text in the Modal..</p>
+	  </div>
+	</div>
 
   </body>
   <script src="main.js"></script>
