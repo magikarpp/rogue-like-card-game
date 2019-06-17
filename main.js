@@ -143,6 +143,11 @@ function FloorOne(){
           isActive = true;
           if(gen_step == 1){
             player = new Character("warrior");
+
+            for(let i = 0; i < 3; i++){
+              deck.push(new Card(player, "Heavy Attack", "normal", 10, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]));
+            }
+
             addText("&nbsp");
             addText("You feel the weight of the sword heavy in your hands.");
           } else if(gen_step == 2){
@@ -282,7 +287,7 @@ function startBattle(enemies){
 function battle(enemies){
 
   for(let i = 0; i < enemies.length; i++){
-    addText(enemies[i].encounter());
+    addText(enemies[i].encounterSpeech());
   }
 
   for(let i = 0; i < player.slots; i++){
@@ -489,56 +494,50 @@ function Character(job){
     this.name = p_name;
     this.job = "warrior";
     this.totalHealth = 150;
-    this.currentHealth = this.totalHealth;
     this.totalAttack = 5;
-    this.currentAttack = this.totalAttack;
+    this.totalMagicA = 0;
     this.totalDefense = 5;
-    this.currentDefense = this.totalDefense;
+    this.totalMagicD = 3;
     this.totalMana = 50;
-    this.currentMana = this.totalMana;
     this.totalStamina = 100;
-    this.currentStamina = this.totalStamina;
     this.slots = 3;
-    this.status = [];
-
-    for(let i = 0; i < 3; i++){
-      deck.push(new Card(this, "Heavy Attack", "normal", 10, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]));
-    }
 
   } else if(job == "rogue"){
     this.name = p_name;
     this.job = "rogue"
     this.totalHealth = 100;
-    this.currentHealth = this.totalHealth;
     this.totalAttack = 3;
-    this.currentAttack = this.totalAttack;
+    this.totalMagicA = 1;
     this.totalDefense = 2;
-    this.currentDefense = this.totalDefense;
+    this.totalMagicD = 2;
     this.totalMana = 65;
-    this.currentMana = this.totalMana;
     this.totalStamina = 75;
-    this.currentStamina = this.totalStamina;
     this.slots = 4;
-    this.status = [];
   } else if(job == "mage"){
     this.name = p_name;
     this.job = "mage";
     this.totalHealth = 75;
-    this.currentHealth = this.totalHealth;
     this.totalAttack = 1;
-    this.currentAttack = this.totalAttack;
+    this.totalMagicA = 5;
     this.totalDefense = 1;
-    this.currentDefense = this.totalDefense;
+    this.totalMagicD = 5;
     this.totalMana = 100;
-    this.currentMana = this.totalMana;
     this.totalStamina = 50;
-    this.currentStamina = this.totalStamina;
     this.slots = 3;
-    this.status = [];
   }
+
+  this.level = 1;
+  this.currentHealth = this.totalHealth;
+  this.currentAttack = this.totalAttack;
+  this.currentMagicA = this.totalMagicA;
+  this.currentDefense = this.totalDefense;
+  this.currentMagicD = this.totalMagicD;
+  this.currentMana = this.totalMana;
+  this.currentStamina = this.totalStamina;
+  this.status = [];
 }
 
-function Enemy(eLevel, eName, eType, eHealth, eAttack, eDefense, eEncounter, eCards, elowHealth){
+function Enemy(eLevel, eName, eType, eHealth, eAttack, eMagicA, eDefense, eMagicD, eCards, eEncounter, elowHealth, eDeath){
   this.level = eLevel;
   this.name = eName;
   this.type = eType;
@@ -546,14 +545,24 @@ function Enemy(eLevel, eName, eType, eHealth, eAttack, eDefense, eEncounter, eCa
   this.currentHealth = this.totalHealth;
   this.totalAttack = eAttack * this.level;
   this.currentAttack = this.totalAttack;
+  this.totalMagicA = eMagicA * this.level;
+  this.currentMagicA = this.totalMagicA;
   this.totalDefense = eDefense * this.level;
   this.currentDefense = this.totalDefense;
-  this.encounters = eEncounter;
+  this.totalMagicD = eMagicD * this.level;
+  this.currentMagicD = this.totalMagicD;
   this.cards = eCards;
+  this.encounterWords = eEncounter;
   this.damagedWords = elowHealth;
-  this.lowHealth = function(){ };
-  this.encounter = function(){
-    return this.encounters[Math.floor(Math.random() * this.encounters.length)];
+  this.deathWords = eDeath;
+  this.deathSpeech = function(){
+    return this.deathWords[Math.floor(Math.random() * this.deathWords.length)];
+  };
+  this.damagedSpeech = function(){
+    return this.damagedWords[Math.floor(Math.random() * this.damagedWords.length)];
+  };
+  this.encounterSpeech = function(){
+    return this.encounterWords[Math.floor(Math.random() * this.encounterWords.length)];
   };
 }
 
