@@ -20,7 +20,7 @@ initialize();
 
 function initialize(){
   document.addEventListener("keyup", buttonPress);
-  
+
   document.getElementById("characters").style.display = "none";
   document.getElementById("cards").style.display = "none";
   document.getElementById("info").style.visibility = "hidden";
@@ -30,7 +30,7 @@ function initialize(){
     updateDeckModal();
     document.getElementById("deck-modal").style.display = "block";
   }
-  document.getElementsByClassName("close")[0].onclick = function(){
+  document.getElementById("close").onclick = function(){
     document.getElementById("deck-modal").style.display = "none";
   }
 
@@ -41,6 +41,35 @@ function initialize(){
   }
 
   start();
+}
+
+function updateDeckModal(){
+  let deckNode = document.getElementById("deck-listing");
+  while (deckNode.firstChild) {
+      deckNode.removeChild(deckNode.firstChild);
+  }
+
+  let dict = {};
+  for(let i = 0; i < deck.length; i++){
+    if(dict[deck[i].name] == undefined || dict[deck[i].name] == null){
+      dict[deck[i].name] = 1;
+    } else{
+      dict[deck[i].name]++;
+    }
+  }
+
+  let total = 0;
+
+  for(let key in dict){
+    let value = dict[key];
+    total += value;
+    let newNode = document.createElement("p");
+    newNode.innerHTML = "x" + value + " " + key;
+    deckNode.appendChild(newNode);
+  }
+  let newNode = document.createElement("p");
+  newNode.innerHTML = "Total Cards: " + total;
+  deckNode.appendChild(newNode);
 }
 
 function temporaryBattle(){
