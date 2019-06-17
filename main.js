@@ -1,6 +1,7 @@
 let isStart = false;
 let isBattle = false;
 let isActive = false;
+let isTutorial = false;
 let battleStep = 0;
 
 let current_floor = 1;
@@ -17,6 +18,7 @@ let active_card;
 let enemies = [];
 
 let allEnemies = {};
+let allEnemiesCategory = {};
 let allCards = {};
 
 initialize();
@@ -50,30 +52,69 @@ function initialize(){
 }
 
 function initEnemies(){
+  let allRace = allRaces();
+
+  allEnemiesCategory["Level"] = levelTheme;
+  allEnemiesCategory["Race"] = Race;
+
   allEnemies["Goblin Soldier"] = GoblinSoldier;
+  allEnemies["Small Goblin"] = SmallGoblin;
 
   function GoblinSoldier(){
-    let dude = new Enemy(1, randomNum(15, 1), "Goblin Soldier", "normal", randomNum(50, 5), randomNum(5, 1), 0, 1, 0, [], ["A Goblin Solider catches you in it's gaze.", "A small goblin dashes towards you.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 15, "Goblin Soldier", "Goblin", "normal", randomNum(50, 5), randomNum(5, 1), 0, 1, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     return dude;
   }
+  function SmallGoblin(){
+    let dude = new Enemy(1, randomNum(8, 1), randomNum(50, 5), 80, "Small Goblin", "Goblin", "normal", randomNum(30, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+    pushCard("Attack", dude);
+    return dude;
+  }
+  function LargeGoblin(){
+    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 15, "Large Goblin", "Goblin", "normal", randomNum(50, 5), randomNum(3, 1), 0, 2, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    pushCard("Heavy Attack", dude);
+    return dude;
+  }
 
+  function Race(race){
+    let array = [];
+    for(let key in allEnemies){
+      let value = allEnemies[key]();
+      if(value.race) if(value.race == race) array.push(value);
+    }
+
+    let found = false;
+    let dude;
+
+     while(!found){
+       dude = array[Math.floor(Math.random() * array.length)];
+       if(dude.chance > Math.floor(Math.random() * dude.chance)) found = true;
+     }
+
+     return dude;
+  }
+
+  function levelTheme(level){
+    let array = [];
+    for(let key in allEnemies){
+      let value = allEnemies[key]();
+      if(value.level) if(value.level == level) if(!array.includes(value.race)) array.push(value.race);
+    }
+
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  function allRaces(){
+    let array = [];
+    array.push("Goblin");
+    return array;
+  }
   function randomNum(base, variance){
     let result;
     if(Math.floor(Math.random() * 2) == 0) result = base + Math.floor(Math.random() * (variance + 1));
     else result = base - Math.floor(Math.random() * (variance + 1));
     return result;
-  }
-}
-
-function pushCard(cardName, user){
-  let thing = allCards[cardName]();
-  thing.user = user;
-
-  if(user != player){
-    user.cards.push(thing);
-  } else{
-    deck.push(thing);
   }
 }
 
@@ -87,12 +128,10 @@ function initCards(){
     let thing = new Card(1, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
     return thing;
   }
-
   function DoNothing(){
     let thing = new Card(1, undefined, "Do Nothing", "normal", "Any", 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
     return thing;
   }
-
   function Rest(){
     let thing = new Card(1, undefined, "Rest", "normal", "Any", 0, 0, 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
     thing.effect = function(){
@@ -105,10 +144,20 @@ function initCards(){
     };
     return thing;
   }
-
   function HeavyAttack(){
     let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]);
     return thing;
+  }
+}
+
+function pushCard(cardName, user){
+  let thing = allCards[cardName]();
+  thing.user = user;
+
+  if(user != player){
+    user.cards.push(thing);
+  } else{
+    deck.push(thing);
   }
 }
 
@@ -141,9 +190,9 @@ function updateDeckModal(){
   deckNode.appendChild(newNode);
 }
 
-function temporaryBattle(){
-  enemies.push(allEnemies["Goblin Soldier"]());
-  enemies.push(allEnemies["Goblin Soldier"]());
+function temporaryBattle(race){
+  enemies.push(allEnemiesCategory["Race"](race));
+  enemies.push(allEnemiesCategory["Race"](race));
 
   startBattle(enemies);
 }
@@ -236,9 +285,10 @@ function FloorOne(){
                 isActive = false;
                 options = 0;
                 if(gen_step == 1){
-                  console.log("Tutorial");
+                  clearText();
+                  tutorial();
                 } else{
-                  temporaryBattle();
+                  startFloor(current_floor);
                 }
               }
             }
@@ -248,6 +298,32 @@ function FloorOne(){
         counter++;
         setTimeout(loop, 0);
       }
+    }
+  }
+}
+
+function startFloor(floor){
+  clearText();
+  let theme = allEnemiesCategory["Level"](1);
+
+  temporaryBattle(theme);
+}
+
+function tutorial(){
+  counter = 0;
+  isTutorial = true;
+  loop();
+
+  function loop(){
+    if(counter == 400) addText("You push open the door labeled \"Tutorial\".");
+    if(counter == 1200) addText("But then realize that the dev is lazy and hasn't added this yet.");
+    if(counter == 2200) addText("Good luck!");
+    if(counter == 3000) addText("You wonder what that was all about and head to the first floor...");
+    if(counter == 4000){
+      startFloor(current_floor);
+    } else{
+      counter++;
+      setTimeout(loop, 0);
     }
   }
 }
@@ -582,6 +658,7 @@ function Character(job){
 
   this.level = 1;
   this.totalExp = 100;
+  this.gold = 0;
   this.currentExp = 0;
   this.currentHealth = this.totalHealth;
   this.currentAttack = this.totalAttack;
@@ -593,11 +670,14 @@ function Character(job){
   this.status = [];
 }
 
-function Enemy(eLevel, eExp, eName, eType, eHealth, eAttack, eMagicA, eDefense, eMagicD, eCards, eEncounter, elowHealth, eDeath){
+function Enemy(eLevel, eExp, eGold, eChance, eName, eRace, eType, eHealth, eAttack, eMagicA, eDefense, eMagicD, eCards, eEncounter, elowHealth, eDeath){
   this.level = eLevel;
   this.exp = eExp;
+  this.gold = eGold;
+  this.chance = eChance;
   this.name = eName;
   this.type = eType;
+  this.race = eRace;
   this.totalHealth = eHealth;
   this.currentHealth = this.totalHealth;
   this.totalAttack = eAttack;
