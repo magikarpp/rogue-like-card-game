@@ -16,6 +16,9 @@ let current_cards = [];
 let active_card;
 let enemies = [];
 
+let allEnemies = {};
+let allCards = {};
+
 initialize();
 
 function initialize(){
@@ -40,7 +43,73 @@ function initialize(){
     }
   }
 
+  initCards();
+  initEnemies();
+
   start();
+}
+
+function initEnemies(){
+  allEnemies["Goblin Soldier"] = GoblinSoldier;
+
+  function GoblinSoldier(){
+    let dude = new Enemy(1, randomNum(15, 1), "Goblin Soldier", "normal", randomNum(50, 5), randomNum(5, 1), 0, 1, 0, [], ["A Goblin Solider catches you in it's gaze.", "A small goblin dashes towards you.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    pushCard("Attack", dude);
+    return dude;
+  }
+
+  function randomNum(base, variance){
+    let result;
+    if(Math.floor(Math.random() * 2) == 0) result = base + Math.floor(Math.random() * (variance + 1));
+    else result = base - Math.floor(Math.random() * (variance + 1));
+    return result;
+  }
+}
+
+function pushCard(cardName, user){
+  let thing = allCards[cardName]();
+  thing.user = user;
+
+  if(user != player){
+    user.cards.push(thing);
+  } else{
+    deck.push(thing);
+  }
+}
+
+function initCards(){
+  allCards["Attack"] = Attack;
+  allCards["Do Nothing"] = DoNothing;
+  allCards["Rest"] = Rest;
+  allCards["Heavy Attack"] = HeavyAttack;
+
+  function Attack(){
+    let thing = new Card(1, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
+    return thing;
+  }
+
+  function DoNothing(){
+    let thing = new Card(1, undefined, "Do Nothing", "normal", "Any", 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
+    return thing;
+  }
+
+  function Rest(){
+    let thing = new Card(1, undefined, "Rest", "normal", "Any", 0, 0, 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
+    thing.effect = function(){
+      this.user.currentHealth += 10;
+      if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+      this.user.currentStamina += 50;
+      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+      this.user.cuurentMana += 25;
+      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
+    };
+    return thing;
+  }
+
+  function HeavyAttack(){
+    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]);
+    return thing;
+  }
 }
 
 function updateDeckModal(){
@@ -73,31 +142,8 @@ function updateDeckModal(){
 }
 
 function temporaryBattle(){
-  //FROM HERE DOWN IS TEMPORARY TESTING
-  let tempEnemy = new Enemy(1, "Goblin", "normal", 10, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
-  let tempCard = new Card(tempEnemy, "Rest", "normal", 0, 0, 0, 0, "Recover stamina and mana.", ["(you) rests it's eyes.", "(you) feels well rested.", "(enemy) looks confused as (you) sleeps."]);
-  tempCard.effect = function(){
-    this.user.currentHealth += 5;
-    if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-    this.user.currentStamina += 10;
-    if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-    this.user.cuurentMana += 5;
-    if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-  };
-
-  let tempCards = [];
-  tempCards.push(tempCard);
-
-  tempCard = new Card(tempEnemy, "Attack", "normal", 15, 0, 0, 0, "A normal attack.", ["(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
-  for(let i = 0; i < 5; i++){
-    tempCards.push(tempCard);
-  }
-
-  tempEnemy.cards = tempCards;
-  enemies.push(tempEnemy);
-  let tempEnemy2 = new Enemy(1, "Goblin", "normal", 10, 1, 1, ["A wild Goblin appears!", "A Goblin stares at you with hungry eyes.", "You see a pair of glowing, red eyes coming at you from the shadows!"], [], ["(you) weakly wobbles.", "(you) cries in pain."]);
-  tempEnemy2.cards = tempCards;
-  enemies.push(tempEnemy2);
+  enemies.push(allEnemies["Goblin Soldier"]());
+  enemies.push(allEnemies["Goblin Soldier"]());
 
   startBattle(enemies);
 }
@@ -129,10 +175,10 @@ function FloorOne(){
       if(counter == 300 || counter == 700) addText("...");
       if(counter == 1100) addText("You feel a drop of damp water hit your face.");
       if(counter == 1700) addText("You slowly open your eyes...");
-      if(counter == 2300) addText("Your eyes adjust to the dark, dreary chamber.");
-      if(counter == 2900) addText("Rats scurry behind spider webs as you lift yourself up.");
-      if(counter == 3700) addText("In front of you lies three weapons.");
-      if(counter == 4400) {
+      if(counter == 2400) addText("Your eyes adjust to the dark, dreary chamber.");
+      if(counter == 3000) addText("Rats scurry behind spider webs as you lift yourself up.");
+      if(counter == 3800) addText("In front of you lies three weapons.");
+      if(counter == 4500) {
         addText("&nbsp");
         addText("(1) Sword, (2) Dagger, (3) Staff");
         addText("<p style='color: purple;'>Pick a weapon:</p>");
@@ -145,7 +191,7 @@ function FloorOne(){
             player = new Character("warrior");
 
             for(let i = 0; i < 3; i++){
-              deck.push(new Card(player, "Heavy Attack", "normal", 10, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]));
+              pushCard("Heavy Attack", player);
             }
 
             addText("&nbsp");
@@ -171,11 +217,11 @@ function FloorOne(){
             loop2();
 
             function loop2(){
-              if(counter == 1000){
+              if(counter == 1000) addText("You look ahead and see two doors.");
+              if(counter == 1900){
                 addText("&nbsp");
-                addText("You look ahead and see two doors.");
+                addText("One door has a sign - \"Tutorial\"; the other - \"Floor 1\".");
               }
-              if(counter == 1900) addText("One door has a sign - \"Tutorial\"; the other - \"Floor 1\".");
               if(counter == 3000){
                 options = 2;
                 isActive = true;
@@ -308,6 +354,8 @@ function battle(enemies){
       let temp = false
       for(let i = enemies.length - 1; i >= 0; i--){
         if(enemies[i].currentHealth <= 0){
+          addText("&nbsp");
+          addText(enemies[i].deathSpeech());
           removeElement(document.getElementById("enemy" + i));
           enemies.splice(i, 1);
           temp = true;
@@ -376,7 +424,7 @@ function activateCard(cardNum, target){
   isActive = false;
 
   if(battleStep == 0){
-    if(current_cards[cardNum].attack == 0 || enemies.length == 1){
+    if((current_cards[cardNum].attack == 0 && current_cards[cardNum].magicA == 0) || enemies.length == 1){
       let eCard = enemies[0].cards[Math.floor(Math.random() * enemies[0].cards.length)];
       let pCard = current_cards[cardNum];
 
@@ -425,22 +473,28 @@ function activateCard(cardNum, target){
 }
 
 function useCard(uCard, tCard, target){
-  if(uCard.user.currentStamina < uCard.stamina){
+  if(uCard.user == player && uCard.user.currentStamina < uCard.stamina){
     addText(uCard.user.name + " does not have enough stamina.");
     return false;
-  } else if(uCard.user.currentMana < uCard.mana){
+  } else if(uCard.user == player && uCard.user.currentMana < uCard.mana){
     addText(uCard.user.name + " does not have enough mana.");
     return false;
   } else {
-    uCard.user.currentStamina -= uCard.stamina;
-    uCard.user.currentMana -= uCard.mana;
+    if(uCard.user == player){
+      uCard.user.currentStamina -= uCard.stamina;
+      uCard.user.currentMana -= uCard.mana;
+    }
 
     uCard.effect();
-    let damage = (uCard.attack + Math.floor(Math.random() * uCard.user.currentAttack) - (tCard.defense + target.currentDefense));
-    if(uCard.attack == 0 || damage < 0) damage = 0;
+    let pDamage = (uCard.attack + uCard.user.currentAttack) - (tCard.defense + target.currentDefense);
+    if(uCard.attack == 0 || pDamage < 0) pDamage = 0;
+    let mDamage = (uCard.magicA + uCard.user.currentMagicA) - (tCard.magicD + target.currentMagicD);
+    if(uCard.magicA == 0 || mDamage < 0) mDamage = 0;
+    let damage = pDamage + mDamage;
     let text = uCard.speech().replace(/\(you\)/g, uCard.user.name).replace(/\(enemy\)/, target.name).replace(/\(damage\)/, damage);
     addText(text);
     target.currentHealth -= damage;
+    uCard.endEffect();
     checkStats();
     return true;
   }
@@ -493,11 +547,11 @@ function Character(job){
   if(job == "warrior"){
     this.name = p_name;
     this.job = "warrior";
-    this.totalHealth = 150;
+    this.totalHealth = 125;
     this.totalAttack = 5;
-    this.totalMagicA = 0;
+    this.totalMagicA = 1;
     this.totalDefense = 5;
-    this.totalMagicD = 3;
+    this.totalMagicD = 1;
     this.totalMana = 50;
     this.totalStamina = 100;
     this.slots = 3;
@@ -505,18 +559,18 @@ function Character(job){
   } else if(job == "rogue"){
     this.name = p_name;
     this.job = "rogue"
-    this.totalHealth = 100;
+    this.totalHealth = 115;
     this.totalAttack = 3;
-    this.totalMagicA = 1;
-    this.totalDefense = 2;
-    this.totalMagicD = 2;
-    this.totalMana = 65;
+    this.totalMagicA = 3;
+    this.totalDefense = 3;
+    this.totalMagicD = 3;
+    this.totalMana = 75;
     this.totalStamina = 75;
     this.slots = 4;
   } else if(job == "mage"){
     this.name = p_name;
     this.job = "mage";
-    this.totalHealth = 75;
+    this.totalHealth = 100;
     this.totalAttack = 1;
     this.totalMagicA = 5;
     this.totalDefense = 1;
@@ -527,6 +581,8 @@ function Character(job){
   }
 
   this.level = 1;
+  this.totalExp = 100;
+  this.currentExp = 0;
   this.currentHealth = this.totalHealth;
   this.currentAttack = this.totalAttack;
   this.currentMagicA = this.totalMagicA;
@@ -537,20 +593,25 @@ function Character(job){
   this.status = [];
 }
 
-function Enemy(eLevel, eName, eType, eHealth, eAttack, eMagicA, eDefense, eMagicD, eCards, eEncounter, elowHealth, eDeath){
+function Enemy(eLevel, eExp, eName, eType, eHealth, eAttack, eMagicA, eDefense, eMagicD, eCards, eEncounter, elowHealth, eDeath){
   this.level = eLevel;
+  this.exp = eExp;
   this.name = eName;
   this.type = eType;
-  this.totalHealth = eHealth * this.level;
+  this.totalHealth = eHealth;
   this.currentHealth = this.totalHealth;
-  this.totalAttack = eAttack * this.level;
+  this.totalAttack = eAttack;
   this.currentAttack = this.totalAttack;
-  this.totalMagicA = eMagicA * this.level;
+  this.totalMagicA = eMagicA;
   this.currentMagicA = this.totalMagicA;
-  this.totalDefense = eDefense * this.level;
+  this.totalDefense = eDefense;
   this.currentDefense = this.totalDefense;
-  this.totalMagicD = eMagicD * this.level;
+  this.totalMagicD = eMagicD;
   this.currentMagicD = this.totalMagicD;
+  this.totalStamina = 0;
+  this.currentStamina = 0;
+  this.totalMana = 0;
+  this.currentMana = 0;
   this.cards = eCards;
   this.encounterWords = eEncounter;
   this.damagedWords = elowHealth;
@@ -566,16 +627,21 @@ function Enemy(eLevel, eName, eType, eHealth, eAttack, eMagicA, eDefense, eMagic
   };
 }
 
-function Card(cardUser, cardName, cardType, cardAttack, cardDefense, cardMana, cardStamina, cardDescription, cardSpeech){
+function Card(cardLevel, cardUser, cardName, cardType, cardJob, cardAttack, cardMagicA, cardDefense, cardMagicD, cardMana, cardStamina, cardDescription, cardSpeech){
+  this.level = cardLevel;
   this.user = cardUser;
   this.name = cardName;
   this.type = cardType;
+  this.job = cardJob;
   this.attack = cardAttack;
+  this.magicA = cardMagicA;
   this.defense = cardDefense;
+  this.magicD = cardMagicD;
   this.mana = cardMana;
   this.stamina = cardStamina;
   this.speeches = cardSpeech;
   this.effect = function(){ };
+  this.endEffect = function(){ };
   this.speech = function(){
     return this.speeches[Math.floor(Math.random() * this.speeches.length)];
   };
@@ -583,25 +649,15 @@ function Card(cardUser, cardName, cardType, cardAttack, cardDefense, cardMana, c
 }
 
 function initDeck(){
-  for(let i = 0; i < 9; i++){
-    deck.push(new Card(player, "Attack", "normal", 5, 0, 0, 15, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]));
+  for(let i = 0; i < 10; i++){
+    pushCard("Attack", player);
   }
   for(let i = 0; i < 5; i++){
-    let tempCard = new Card(player, "Nothing", "normal", 0, 0, 0, 0, "Do nothing.", ["(you) takes a seat.", "(you) sits there quietly."]);
-    deck.push(tempCard);
+    pushCard("Do Nothing", player);
   }
 
   for(let i = 0; i < 5; i++){
-    let tempCard = new Card(player, "Rest", "normal", 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
-    tempCard.effect = function(){
-      this.user.currentHealth += 10;
-      if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += 50;
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.cuurentMana += 25;
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-    };
-    deck.push(tempCard);
+    pushCard("Rest", player);
   }
 }
 
