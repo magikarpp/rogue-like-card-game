@@ -3,6 +3,7 @@ let isBattle = false;
 let isActive = false;
 let isTutorial = false;
 let battleStep = 0;
+let paused = false;
 
 let current_floor = 1;
 let counter = 0;
@@ -19,6 +20,7 @@ let active_card;
 let enemies = [];
 let dead_enemies = [];
 
+let bossFight = false;
 let allEnemies = {};
 let allEnemiesCategory = {};
 let allCards = {};
@@ -26,7 +28,7 @@ let allCardsCategory = {};
 let allItems = {};
 let allItemsCategory = {};
 
-let isTesting = false;
+let isTesting = true;
 
 initialize();
 
@@ -40,14 +42,17 @@ function initialize(){
 
   document.getElementById("deck-list").onclick = function(){
     updateDeckModal();
+    paused = true;
     document.getElementById("deck-modal").style.display = "block";
   }
   document.getElementById("close").onclick = function(){
+    paused = false;
     document.getElementById("deck-modal").style.display = "none";
   }
 
   window.onclick = function(event){
     if(event.target == document.getElementById("deck-modal")){
+      paused = false;
       document.getElementById("deck-modal").style.display = "none";
     }
   }
@@ -61,6 +66,11 @@ function initialize(){
 }
 
 function testingFunction(){
+  isStart = true;
+
+  document.getElementById("info").style.visibility = "visible";
+  document.getElementById("deck-list").style.display = "inline-block";
+
   p_name = "tester";
   player = new Character("warrior");
 
@@ -70,7 +80,7 @@ function testingFunction(){
 
   initDeck();
 
-  temporaryBattle("Goblin");
+  startFloor(current_floor);
 }
 
 function initEnemies(){
@@ -80,6 +90,7 @@ function initEnemies(){
   allEnemies["Goblin Soldier"] = GoblinSoldier;
   allEnemies["Small Goblin"] = SmallGoblin;
   allEnemies["Large Goblin"] = LargeGoblin;
+  allEnemies["Goblin Warchief"] = GoblinWarchief;
 
   function GoblinSoldier(){
     let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(50, 5), randomNum(5, 1), 0, 1, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
@@ -97,8 +108,13 @@ function initEnemies(){
     pushCard("Heavy Attack", dude);
     return dude;
   }
+  function GoblinWarchief(){
+    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 10, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(10, 5), randomNum(3, 1), 0, 2, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    pushCard("Heavy Attack", dude);
+    return dude;
+  }
 
-  function Race(race){
+  function Race(race, boss){
     let array = [];
     for(let key in allEnemies){
       let value = allEnemies[key]();
@@ -107,10 +123,13 @@ function initEnemies(){
 
     let found = false;
     let dude;
-
+    console.log(array);
      while(!found){
        dude = array[Math.floor(Math.random() * array.length)];
-       if(dude.chance > Math.floor(Math.random() * 100)) found = true;
+       if(boss) found = true;
+       else{
+        if(dude.chance > Math.floor(Math.random() * 100)) found = true;
+       }
      }
 
      return dude;
@@ -120,17 +139,10 @@ function initEnemies(){
     let array = [];
     for(let key in allEnemies){
       let value = allEnemies[key]();
-      if(value.level) if(value.level == level) if(!array.includes(value.race)) array.push(value.race);
+      if(value.level) if(value.level == level) if(!value.race.includes("-Boss")) if(!array.includes(value.race)) array.push(value.race);
     }
 
     return array[Math.floor(Math.random() * array.length)];
-  }
-
-  function randomNum(base, variance){
-    let result;
-    if(Math.floor(Math.random() * 2) == 0) result = base + Math.floor(Math.random() * (variance + 1));
-    else result = base - Math.floor(Math.random() * (variance + 1));
-    return result;
   }
 }
 
@@ -161,7 +173,7 @@ function initCards(){
     return thing;
   }
   function HeavyAttack(){
-    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 25, "A strong attack.", ["(you) bash in (enemy)'s head.", "(you) deal a crushing blow to (enemy)."]);
+    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 25, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
     return thing;
   }
 }
@@ -206,7 +218,7 @@ function initItems(){
     }
 
     let dude = array[Math.floor(Math.random() * array.length)];
-    if(!(dude.chance > Math.floor(Math.random() * 100))) dude = undefined;
+    if(dude.chance < Math.floor(Math.random() * 100)) dude = undefined;
 
     return dude;
   }
@@ -223,37 +235,29 @@ function pushCard(cardName, user){
   }
 }
 
-function updateDeckModal(){
-  let deckNode = document.getElementById("deck-listing");
-  while (deckNode.firstChild) {
-      deckNode.removeChild(deckNode.firstChild);
-  }
+function initiateBattle(race, boss){
+  enemies = [];
+  dead_enemies = [];
 
-  let dict = {};
-  for(let i = 0; i < deck.length; i++){
-    if(dict[deck[i].name] == undefined || dict[deck[i].name] == null){
-      dict[deck[i].name] = 1;
-    } else{
-      dict[deck[i].name]++;
+  if(boss){
+    if(Math.floor(Math.random() * 2)) enemies.push(allEnemiesCategory["Race"](race, false));
+    enemies.push(allEnemiesCategory["Race"]((race + "-Boss"), true));
+    if(Math.floor(Math.random() * 2)) enemies.push(allEnemiesCategory["Race"](race, false));
+  } else{
+    let amount = Math.floor(Math.random() * 100);
+    if(amount >= 0 && amount < 45){
+      enemies.push(allEnemiesCategory["Race"](race, false));
+    }
+    if(amount >= 45 && amount < 90){
+      enemies.push(allEnemiesCategory["Race"](race, false));
+      enemies.push(allEnemiesCategory["Race"](race, false));
+    }
+    if(amount >= 90 && amount < 100){
+      enemies.push(allEnemiesCategory["Race"](race, false));
+      enemies.push(allEnemiesCategory["Race"](race, false));
+      enemies.push(allEnemiesCategory["Race"](race, false));
     }
   }
-
-  let total = 0;
-
-  for(let key in dict){
-    let value = dict[key];
-    total += value;
-    let newNode = document.createElement("p");
-    newNode.innerHTML = "x" + value + " " + key;
-    deckNode.appendChild(newNode);
-  }
-  let newNode = document.createElement("p");
-  newNode.innerHTML = "Total Cards: " + total;
-  deckNode.appendChild(newNode);
-}
-
-function temporaryBattle(race){
-  enemies.push(allEnemiesCategory["Race"](race));
 
   startBattle(enemies);
 }
@@ -339,7 +343,9 @@ function FloorOne(){
                 addText("(1) Tutorial, (2) Floor 1");
                 addText("<p style='color: purple;'>Which do you take?<p>");
               }
-              if(gen_step == 0){
+              if(paused){
+                setTimeout(loop2, 0);
+              } else if(gen_step == 0){
                 counter++;
                 setTimeout(loop2, 0);
               } else{
@@ -356,8 +362,12 @@ function FloorOne(){
           } else setTimeout(loop1, 0);
         }
       } else{
-        counter++;
-        setTimeout(loop, 0);
+        if(paused){
+          setTimeout(loop, 0);
+        } else{
+          counter++;
+          setTimeout(loop, 0);
+        }
       }
     }
   }
@@ -365,9 +375,99 @@ function FloorOne(){
 
 function startFloor(floor){
   clearText();
-  let theme = allEnemiesCategory["Level"](floor);
+  addText("You arrive at Floor " + floor);
+  current_floor = floor;
+  document.getElementById("current-floor").innerHTML = "Floor " + current_floor;
 
-  temporaryBattle(theme);
+  let race = allEnemiesCategory["Level"](floor);
+
+  counter = 0;
+
+  loop();
+
+  function loop(){
+    if(counter == 800){
+      let path = Math.floor(Math.random() * 1000);
+      if(path >= 0 && path < 100){
+        console.log("nothing");
+        counter = 0;
+      }
+      else if(path >= 100 && path < 200){
+        console.log("reg battle");
+        initiateBattle(race, false);
+      }
+      else if(path >= 200 && path < 250){
+        let temp_counter = 0;
+        gen_step = 0;
+        addText("You found the boss room.");
+        bossLoop();
+
+        function bossLoop(){
+          if(temp_counter == 500){
+            addText("&nbsp");
+            addText("(1) Enter, (2) Walk Away");
+            addText("<p style='color: purple'>Do you Enter?</p>");
+            isActive = true;
+            options = 2;
+          }
+          if(paused){
+            setTimeout(bossLoop, 0);
+          } else if(gen_step == 0){
+            temp_counter++;
+            setTimeout(bossLoop, 0);
+          } else if(gen_step == 1){
+            bossFight = true;
+            initiateBattle(race, true);
+          } else if(gen_step == 2){
+            addText("You take a step back to look around some more.");
+            gen_step = 0;
+            isActive = false;
+            options = 0;
+            counter = 0;
+          }
+        }
+      }
+      else if(path >= 250 && path < 300){
+        console.log("nothing");
+        counter = 0;
+      }
+      else if(path >= 300 && path < 400){
+        console.log("nothing");
+        counter = 0;
+      }
+      else if(path >= 400 && path < 1000){
+        myriad();
+        function myriad(){
+          let text;
+          let random = Math.floor(Math.random() * 10);
+          if(random == 0) text = "You feel a slight breeze blow past you.";
+          else if(random == 1) text = "An omnious feeling creeps up your back.";
+          else if(random == 2) text = "There is a barred window that you can barely make out whats outside.";
+          else if(random == 3) text = "You come across a stretched out hallway.";
+          else if(random == 4) text = "Candles dimly illuminate your way.";
+          else if(random == 5) text = "The small candles flicker, making the shadows dance.";
+          else if(random == 6) text = "The damp air wraps around your body.";
+          else if(random == 7) text = "You feel eyes watching you from the shadows.";
+          else if(random == 8) text = "The cold, stone walls do not feel inviting.";
+          else if(random == 9) text = "You hear droplets echo in the distance.";
+
+          addText("&nbsp");
+          addText(text);
+          counter = 0;
+        }
+      }
+    }
+    let trigger = false;
+
+    if(bossFight == true){
+      return;
+    } else if(paused){
+      setTimeout(loop, 0);
+    } else{
+      counter++;
+      setTimeout(loop, 0);
+    }
+  }
 }
 
 function tutorial(){
@@ -383,8 +483,12 @@ function tutorial(){
     if(counter == 4000){
       startFloor(current_floor);
     } else{
-      counter++;
-      setTimeout(loop, 0);
+      if(paused){
+        setTimeout(loop, 0);
+      } else{
+        counter++;
+        setTimeout(loop, 0);
+      }
     }
   }
 }
@@ -431,6 +535,8 @@ function startBattle(enemies){
   document.getElementById("cards").style.display = "block";
   document.getElementById("info").style.visibility = "hidden";
 
+  document.getElementById("board").style.backgroundColor = "rgb(255, 250, 250)";
+
   //Set enemies on board
   for(let i = 0; i < enemies.length; i++){
     let node = document.createElement("div");
@@ -468,6 +574,7 @@ function startBattle(enemies){
 }
 
 function battle(enemies){
+  addText("&nbsp");
 
   for(let i = 0; i < enemies.length; i++){
     addText(enemies[i].encounterSpeech());
@@ -510,23 +617,22 @@ function battle(enemies){
   }
 }
 
-function loot(level){
-  return allItemsCategory["Level"](level);
-}
-
-function addItemToInventory(item){
-  inventory[item] = (inventory[item] || 0) + 1;
-}
-
 function endBattle(result){
   //loot
   isBattle = false;
-  counter = 0;
   gen_step = 0;
+
+  document.getElementById("cards").style.display = "none";
 
   addText("&nbsp");
   let result_loot = [];
   for(let i = 0; i < dead_enemies.length; i++){
+    player.currentExp += dead_enemies[i].exp
+    if(player.currentExp > player.totalExp){
+      player.level = player.level + 1;
+      player.currentExp = player.currentExp - player.totalExp;
+      player.totalExp = player.totalExp + player.totalExp/2;
+    }
     result_loot.push(dead_enemies[i].gold + " gold");
     player.gold += dead_enemies[i].gold;
     let drop = loot(dead_enemies[i].level);
@@ -542,6 +648,12 @@ function endBattle(result){
     if(i == result_loot.length - 1){
       result_text += result_loot[i] + ".";
     } else result_text += result_loot[i] + ", ";
+  }
+
+  if(result == "died"){
+    result_text = "You died.";
+  } else if(result == "cards"){
+    result_text = "You ran out of cards.";
   }
 
   addText(result_text);
@@ -560,30 +672,45 @@ function endBattle(result){
 
   function loop(){
     if(gen_step == 0){
-      counter++;
       setTimeout(loop, 0);
     } else{
-      //Cleanup Step
-      isActive = false;
-      clearText();
+      if(result == "died" || result == "cards"){
+        gameOver();
+      } else{
+        //Cleanup Step
+        isActive = false;
 
-      document.getElementById("characters").style.display = "none";
-      document.getElementById("cards").style.display = "none";
-      document.getElementById("info").style.visibility = "visible";
+        document.getElementById("board").style.backgroundColor = "rgb(255, 255, 255)";
+        document.getElementById("characters").style.display = "none";
+        document.getElementById("info").style.visibility = "visible";
 
-      enemies = [];
-      dead_enemies = [];
-      tempDeck = [];
-      current_cards = [];
-      counter = 0;
+        enemies = [];
+        dead_enemies = [];
+        tempDeck = [];
+        current_cards = [];
+        counter = 0;
+        gen_step = 0;
 
-      for(let i = 0; i < player.slots; i++){
-        removeElement(document.getElementById("c" + i));
+        for(let i = 0; i < player.slots; i++){
+          removeElement(document.getElementById("c" + i));
+        }
+
+        addText("&nbsp");
+        if(bossFight){
+          bossFight = false;
+          startFloor(current_floor);
+        }
       }
-
-      temporaryBattle("Goblin");
     }
   }
+}
+
+function loot(level){
+  return allItemsCategory["Level"](level);
+}
+
+function addItemToInventory(item){
+  inventory[item] = (inventory[item] || 0) + 1;
 }
 
 function buttonPress(event){
@@ -627,7 +754,10 @@ function activateCard(cardNum, target){
       if(useCard(pCard, eCard, enemies[0])){
         setCardAt(cardNum);
       }
-      useCard(eCard, pCard, player);
+      for(let i = 0; i < enemies.length; i++){
+        eCard = enemies[i].cards[Math.floor(Math.random() * enemies[i].cards.length)];
+        useCard(eCard, pCard, player);
+      }
       document.getElementById("c" + cardNum).style.border = "none";
 
     } else{
@@ -909,6 +1039,42 @@ function checkStats(){
   document.getElementById("player-mana").style.marginLeft = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.marginRight = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.backgroundColor = "rgb(150, 235, 255)";
+}
+
+function randomNum(base, variance){
+  let result;
+  if(Math.floor(Math.random() * 2) == 0) result = base + Math.floor(Math.random() * (variance + 1));
+  else result = base - Math.floor(Math.random() * (variance + 1));
+  return result;
+}
+
+function updateDeckModal(){
+  let deckNode = document.getElementById("deck-listing");
+  while (deckNode.firstChild) {
+      deckNode.removeChild(deckNode.firstChild);
+  }
+
+  let dict = {};
+  for(let i = 0; i < deck.length; i++){
+    if(dict[deck[i].name] == undefined || dict[deck[i].name] == null){
+      dict[deck[i].name] = 1;
+    } else{
+      dict[deck[i].name]++;
+    }
+  }
+
+  let total = 0;
+
+  for(let key in dict){
+    let value = dict[key];
+    total += value;
+    let newNode = document.createElement("p");
+    newNode.innerHTML = "x" + value + " " + key;
+    deckNode.appendChild(newNode);
+  }
+  let newNode = document.createElement("p");
+  newNode.innerHTML = "Total Cards: " + total;
+  deckNode.appendChild(newNode);
 }
 
 function gameOver(){
