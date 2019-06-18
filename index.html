@@ -39,19 +39,32 @@
 				<p id="current-floor"></p>
 				<p id="info-name"></p>
 				<button id="deck-list" class="button">Deck List</button>
+				<button id="inventory-list" class="button">Inventory</button>
 			</div>
 
-  </div>
+  	</div>
 
-	<!-- Modal -->
-	<div id="deck-modal" class="modal">
-	  <div class="modal-content">
-	    <p id="close" class="close">&times;</p>
-	    <div id="deck-listing" class="center">
+		<!-- Deck Modal -->
+		<div id="deck-modal" class="modal">
+		  <div class="modal-content">
+		    <p id="deck-close" class="close">&times;</p>
+		    <div id="deck-listing" class="alignedCenterLeft">
+				</div>
+		  </div>
+		</div>
+
+		<!-- Inventory Modal -->
+		<div id="inventory-modal" class="modal">
+			<div class="modal-content">
+				<p id="inventory-close" class="close">&times;</p>
+				<p id="item-used" class="center"></p>
+				<hr>
+				<div id="inventory-listing" class="alignedCenterLeft">
+				</div>
 			</div>
-	  </div>
-	</div>
+		</div>
 
-  </body>
-  <script src="main.js"></script>
+	</body>
+
+	<script src="main.js"></script>
 </html>

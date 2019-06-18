@@ -2,11 +2,13 @@ let isStart = false;
 let isBattle = false;
 let isActive = false;
 let isTutorial = false;
+let isInventory = false;
 let battleStep = 0;
 let paused = false;
 
 let current_floor = 1;
 let counter = 0;
+let inv_step = 0;
 let gen_step = 0;
 let options = 0;
 
@@ -16,6 +18,7 @@ let deck = [];
 let tempDeck = [];
 let current_cards = [];
 let inventory = {};
+let temp_inv = {};
 let active_card;
 let enemies = [];
 let dead_enemies = [];
@@ -39,13 +42,14 @@ function initialize(){
   document.getElementById("cards").style.display = "none";
   document.getElementById("info").style.visibility = "hidden";
   document.getElementById("deck-list").style.display = "none";
+  document.getElementById("inventory-list").style.display = "none";
 
   document.getElementById("deck-list").onclick = function(){
     updateDeckModal();
     paused = true;
     document.getElementById("deck-modal").style.display = "block";
   }
-  document.getElementById("close").onclick = function(){
+  document.getElementById("deck-close").onclick = function(){
     paused = false;
     document.getElementById("deck-modal").style.display = "none";
   }
@@ -57,6 +61,28 @@ function initialize(){
     }
   }
 
+  document.getElementById("inventory-list").onclick = function(){
+    updateInventoryModal();
+    paused = true;
+    isInventory = true;
+    document.getElementById("inventory-modal").style.display = "block";
+  }
+  document.getElementById("inventory-close").onclick = function(){
+    inv_step = -1;
+    paused = false;
+    isInventory = false;
+    document.getElementById("inventory-modal").style.display = "none";
+  }
+
+  window.onclick = function(event){
+    if(event.target == document.getElementById("inventory-modal")){
+      paused = false;
+      isInventory = false;
+      inv_step = -1;
+      document.getElementById("inventory-modal").style.display = "none";
+    }
+  }
+
   initCards();
   initEnemies();
   initItems();
@@ -65,18 +91,79 @@ function initialize(){
   else start();
 }
 
+function updateInventoryModal(){
+  options = Object.keys(inventory).length;
+
+  let deckNode = document.getElementById("inventory-listing");
+  while (deckNode.firstChild) {
+      deckNode.removeChild(deckNode.firstChild);
+  }
+
+  let position = 1;
+  temp_inv = {};
+
+  for(let key in inventory){
+    let value = inventory[key];
+    let newNode = document.createElement("p");
+    newNode.innerHTML = "<span style='color: purple;'>(" + position + ")</span> " + "x" + value + " " + key;
+    deckNode.appendChild(newNode);
+    temp_inv[position] = key;
+    position++;
+  }
+
+  if(inv_step != -1){
+    invLoop();
+  }
+
+  function invLoop(){
+    if(inv_step == -1){
+      options = 0;
+      inv_step = 0;
+      temp_inv = {};
+      return;
+    } else if(inv_step != 0){
+      useItem(inv_step);
+    } else{
+      //Don't pause: already game paused.
+      setTimeout(invLoop, 0);
+    }
+  }
+}
+
+function useItem(num){
+  inv_step = 0;
+  allItems[temp_inv[num]]().effect();
+  checkStats();
+  document.getElementById("item-used").innerHTML = "You used " + temp_inv[num] + ".";
+  inventory[temp_inv[num]] = inventory[temp_inv[num]] - 1;
+  if(inventory[temp_inv[num]] == 0){
+    delete inventory[temp_inv[num]];
+  }
+
+  updateInventoryModal();
+
+}
+
 function testingFunction(){
   isStart = true;
+  isActive = true;
 
   document.getElementById("info").style.visibility = "visible";
   document.getElementById("deck-list").style.display = "inline-block";
+  document.getElementById("inventory-list").style.display = "inline-block";
 
   p_name = "tester";
+  document.getElementById("info-name").innerHTML = p_name;
   player = new Character("warrior");
 
   for(let i = 0; i < 3; i++){
     pushCard("Heavy Attack", player);
   }
+
+  addItemToInventory(allItems["Small Health Potion"]());
+  addItemToInventory(allItems["Small Stamina Potion"]());
+  addItemToInventory(allItems["Small Stamina Potion"]());
+  addItemToInventory(allItems["Small Mana Potion"]());
 
   initDeck();
 
@@ -214,11 +301,11 @@ function initItems(){
     let array = [];
     for(let key in allItems){
       let value = allItems[key]();
-      if(value.level) if(value.level == level) array.push(value);
+      if(value.level) if(value.level <= level) array.push(value);
     }
 
     let dude = array[Math.floor(Math.random() * array.length)];
-    if(dude.chance < Math.floor(Math.random() * 100)) dude = undefined;
+    if((dude.chance * (1 + (level - dude.level))) < Math.floor(Math.random() * 100)) dude = undefined;
 
     return dude;
   }
@@ -269,12 +356,20 @@ function FloorOne(){
   loop();
 
   function loop(){
-    if(gen_step == 2){
-      nextSeq();
-      return;
-    }
+    if(paused){
+      loop1();
+      function loop1(){
+        if(paused) setTimeout(loop1, 0);
+        else loop();
+      }
+    }else{
+      if(gen_step == 2){
+        nextSeq();
+        return;
+      }
 
-    setTimeout(loop, 0);
+      setTimeout(loop, 0);
+    }
   }
 
   function nextSeq(){
@@ -326,6 +421,7 @@ function FloorOne(){
             isActive = false;
 
             document.getElementById("deck-list").style.display = "inline-block";
+            document.getElementById("inventory-list").style.display = "inline-block";
 
             counter = 0;
             loop2();
@@ -389,11 +485,9 @@ function startFloor(floor){
     if(counter == 800){
       let path = Math.floor(Math.random() * 1000);
       if(path >= 0 && path < 100){
-        console.log("nothing");
         counter = 0;
       }
       else if(path >= 100 && path < 200){
-        console.log("reg battle");
         initiateBattle(race, false);
       }
       else if(path >= 200 && path < 250){
@@ -428,11 +522,9 @@ function startFloor(floor){
         }
       }
       else if(path >= 250 && path < 300){
-        console.log("nothing");
         counter = 0;
       }
       else if(path >= 300 && path < 400){
-        console.log("nothing");
         counter = 0;
       }
       else if(path >= 400 && path < 1000){
@@ -533,7 +625,6 @@ function startBattle(enemies){
 
   document.getElementById("characters").style.display = "block";
   document.getElementById("cards").style.display = "block";
-  document.getElementById("info").style.visibility = "hidden";
 
   document.getElementById("board").style.backgroundColor = "rgb(255, 250, 250)";
 
@@ -612,7 +703,15 @@ function battle(enemies){
           document.getElementById("enemies").childNodes[j].childNodes[1].id = "enemy-health" + (j - 1);
         }
       }
-      setTimeout(loop, 0);
+      if(paused){
+        loop1();
+        function loop1(){
+          if(paused) setTimeout(loop1, 0);
+          else loop();
+        }
+      } else{
+          setTimeout(loop, 0);
+      }
     }
   }
 }
@@ -626,6 +725,7 @@ function endBattle(result){
 
   addText("&nbsp");
   let result_loot = [];
+  total_gold = 0;
   for(let i = 0; i < dead_enemies.length; i++){
     player.currentExp += dead_enemies[i].exp
     if(player.currentExp > player.totalExp){
@@ -633,7 +733,7 @@ function endBattle(result){
       player.currentExp = player.currentExp - player.totalExp;
       player.totalExp = player.totalExp + player.totalExp/2;
     }
-    result_loot.push(dead_enemies[i].gold + " gold");
+    total_gold += dead_enemies[i].gold;
     player.gold += dead_enemies[i].gold;
     let drop = loot(dead_enemies[i].level);
     if(drop){
@@ -641,6 +741,8 @@ function endBattle(result){
       result_loot.push(drop.name);
     }
   }
+
+  result_loot.push(total_gold + " gold");
 
   let result_text = "Loot: ";
 
@@ -671,34 +773,41 @@ function endBattle(result){
   loop();
 
   function loop(){
-    if(gen_step == 0){
-      setTimeout(loop, 0);
+    if(paused){
+      loop1();
+      function loop1(){
+        if(paused) setTimeout(loop1, 0);
+        else loop();
+      }
     } else{
-      if(result == "died" || result == "cards"){
-        gameOver();
+      if(gen_step == 0){
+        setTimeout(loop, 0);
       } else{
-        //Cleanup Step
-        isActive = false;
+        if(result == "died" || result == "cards"){
+          gameOver();
+        } else{
+          //Cleanup Step
+          isActive = false;
 
-        document.getElementById("board").style.backgroundColor = "rgb(255, 255, 255)";
-        document.getElementById("characters").style.display = "none";
-        document.getElementById("info").style.visibility = "visible";
+          document.getElementById("board").style.backgroundColor = "rgb(255, 255, 255)";
+          document.getElementById("characters").style.display = "none";
 
-        enemies = [];
-        dead_enemies = [];
-        tempDeck = [];
-        current_cards = [];
-        counter = 0;
-        gen_step = 0;
+          enemies = [];
+          dead_enemies = [];
+          tempDeck = [];
+          current_cards = [];
+          counter = 0;
+          gen_step = 0;
 
-        for(let i = 0; i < player.slots; i++){
-          removeElement(document.getElementById("c" + i));
-        }
+          for(let i = 0; i < player.slots; i++){
+            removeElement(document.getElementById("c" + i));
+          }
 
-        addText("&nbsp");
-        if(bossFight){
-          bossFight = false;
-          startFloor(current_floor);
+          addText("&nbsp");
+          if(bossFight){
+            bossFight = false;
+            startFloor(current_floor);
+          }
         }
       }
     }
@@ -710,13 +819,20 @@ function loot(level){
 }
 
 function addItemToInventory(item){
-  inventory[item] = (inventory[item] || 0) + 1;
+  inventory[item.name] = (inventory[item.name] || 0) + 1;
 }
 
 function buttonPress(event){
   //TODO: implement clicks.
   if(isActive){
-    if(isBattle){
+    if(paused){
+      if(isInventory){
+        if(event.key > 0 && event.key < options + 1){
+          inv_step = event.key;
+        }
+      }
+    }
+    else if(isBattle){
       if(battleStep == 0){
         let size = current_cards.length;
         if(event.key > 0 && event.key < size + 1){
@@ -733,7 +849,7 @@ function buttonPress(event){
         }
       }
     }
-    if(!isBattle){
+    else if(!isBattle){
       if(event.key > 0 && event.key < options + 1){
         gen_step = event.key;
       }
@@ -771,7 +887,15 @@ function activateCard(cardNum, target){
       addText(text);
 
       function loop(){
-        if(battleStep == 1) setTimeout(loop, 0);
+        if(paused){
+          loop1();
+          function loop1(){
+            if(paused) setTimeout(loop1, 0);
+            else loop();
+          }
+        } else{
+            if(battleStep == 1) setTimeout(loop, 0);
+        }
       }
 
     }
@@ -1072,7 +1196,11 @@ function updateDeckModal(){
     newNode.innerHTML = "x" + value + " " + key;
     deckNode.appendChild(newNode);
   }
-  let newNode = document.createElement("p");
+  let newNode = document.createElement("hr");
+  newNode.style.marginRight = "75%";
+  deckNode.appendChild(newNode);
+
+  newNode = document.createElement("p");
   newNode.innerHTML = "Total Cards: " + total;
   deckNode.appendChild(newNode);
 }

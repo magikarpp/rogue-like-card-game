@@ -25,6 +25,11 @@
  text-decoration: none;
 }
 
+.alignedCenterLeft {
+  margin-left: 35%;
+  text-align: left;
+}
+
 #text {
   display: inline-block;
   border: 1px solid black;
