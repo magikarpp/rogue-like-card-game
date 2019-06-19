@@ -34,7 +34,7 @@ let allCardsCategory = {};
 let allItems = {};
 let allItemsCategory = {};
 
-let isTesting = true;
+let isTesting = false;
 
 initialize();
 
@@ -203,6 +203,7 @@ function testingFunction(){
 function initEnemies(){
   allEnemiesCategory["Level"] = levelTheme;
   allEnemiesCategory["Race"] = Race;
+  allEnemiesCategory["Count"] = Count;
 
   allEnemies["Goblin Soldier"] = GoblinSoldier;
   allEnemies["Small Goblin"] = SmallGoblin;
@@ -210,19 +211,19 @@ function initEnemies(){
   allEnemies["Goblin Warchief"] = GoblinWarchief;
 
   function GoblinSoldier(){
-    let dude = new Enemy(1, 15, randomNum(125, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(35, 5), randomNum(2, 1), 0, 3, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    let dude = new Enemy(1, 15, randomNum(125, 5), 3, "Goblin Soldier", "Goblin", "normal", randomNum(35, 5), randomNum(2, 1), 0, 3, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
     pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     pushCard("Attack", dude);
     return dude;
   }
   function SmallGoblin(){
-    let dude = new Enemy(1, 8, randomNum(75, 5), 90, "Small Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+    let dude = new Enemy(1, 8, randomNum(75, 5), 95, "Small Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
     pushCard("Attack", dude);
     return dude;
   }
   function LargeGoblin(){
-    let dude = new Enemy(1, 15, randomNum(125, 5), 10, "Large Goblin", "Goblin", "normal", randomNum(45, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    let dude = new Enemy(1, 15, randomNum(125, 5), 3, "Large Goblin", "Goblin", "normal", randomNum(45, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
     pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     return dude;
@@ -256,6 +257,9 @@ function initEnemies(){
 
      return dude;
   }
+  function Count(race){
+    if(race == "Goblin") return 4;
+  }
 
   function levelTheme(level){
     let array = [];
@@ -275,6 +279,8 @@ function initCards(){
   allCards["Heavy Attack"] = HeavyAttack;
   allCards["Cycle"] = Cycle;
   allCards["Fireball"] = Fireball;
+
+  allCardsCategory["Job"] = Job;
 
   function Attack(){
     let thing = new Card(1, undefined, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
@@ -312,6 +318,24 @@ function initCards(){
   function Fireball(){
     let thing = new Card(1, undefined, undefined, "Fireball", "fire", "Mage", 0, 20, 0, 0, 50, 0, "A ball of fire.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
     return thing;
+  }
+
+  function Job(job){
+    let array = [];
+    for(let key in allCards){
+      let value = allCards[key]();
+      if(value.job) if(value.job == job) array.push(value);
+    }
+
+    let found = false;
+    let dude;
+
+     while(!found){
+       dude = array[Math.floor(Math.random() * array.length)];
+       if(dude.level + (Math.floor(Math.random() * (player.level - dude.level + 1))) >= player.level + (Math.floor(Math.random() * (player.level - dude.level + 1)))) found = true;
+     }
+
+     return dude;
   }
 }
 
@@ -412,22 +436,15 @@ function initiateBattle(race, boss){
   enemies = [];
   dead_enemies = [];
 
+  let enemy_amount = allEnemiesCategory["Count"](race);
+
   if(boss){
-    if(Math.floor(Math.random() * 2)) enemies.push(allEnemiesCategory["Race"](race, false));
+    if(Math.floor(Math.random() * (5 - enemy_amount))) enemies.push(allEnemiesCategory["Race"](race, false));
     enemies.push(allEnemiesCategory["Race"]((race + "-Boss"), true));
-    if(Math.floor(Math.random() * 2)) enemies.push(allEnemiesCategory["Race"](race, false));
+    if(Math.floor(Math.random() * (5 - enemy_amount))) enemies.push(allEnemiesCategory["Race"](race, false));
   } else{
-    let amount = Math.floor(Math.random() * 100);
-    if(amount >= 0 && amount < 45){
-      enemies.push(allEnemiesCategory["Race"](race, false));
-    }
-    if(amount >= 45 && amount < 90){
-      enemies.push(allEnemiesCategory["Race"](race, false));
-      enemies.push(allEnemiesCategory["Race"](race, false));
-    }
-    if(amount >= 90 && amount < 100){
-      enemies.push(allEnemiesCategory["Race"](race, false));
-      enemies.push(allEnemiesCategory["Race"](race, false));
+    let looper = Math.floor(Math.random() * enemy_amount) + 1;
+    for(let i = 0; i < looper; i++){
       enemies.push(allEnemiesCategory["Race"](race, false));
     }
   }
@@ -484,19 +501,23 @@ function FloorOne(){
           isActive = true;
           if(gen_step == 1){
             player = new Character("warrior");
-
             for(let i = 0; i < 3; i++){
               pushCard("Heavy Attack", player);
             }
-
             addText("&nbsp");
             addText("You feel the weight of the sword heavy in your hands.");
           } else if(gen_step == 2){
             player = new Character("rogue");
+            for(let i = 0; i < 3; i++){
+              pushCard("Cycle", player);
+            }
             addText("&nbsp");
             addText("The dagger feels light as a feather in your hands.");
           } else if(gen_step == 3){
             player = new Character("mage");
+            for(let i = 0; i < 3; i++){
+              pushCard("Fireball", player);
+            }
             addText("&nbsp");
             addText("You sense a surge of mana flow from the staff.");
           }
@@ -569,8 +590,7 @@ function startFloor(floor){
 
   function loop(){
     if(counter == 800){
-      // let path = Math.floor(Math.random() * 1000);
-      let path = 350;
+      let path = Math.floor(Math.random() * 1000);
 
       if(path >= 0 && path < 100){
         counter = 0;
@@ -714,7 +734,91 @@ function startFloor(floor){
                     }
                   }
                 } else if(gen_step == 2){
+                  gen_step = 0;
+                  packsLoop();
 
+                  function packsLoop(){
+                    if(gen_step == 0){
+                      clearText();
+                      addText("<span style='color: purple'>(2)</span> Buy Pack: 1000 gold.");
+                      addText("<span style='color: purple'>(1)</span> Go Back");
+                      addText("Remaining Gold: " + player.gold);
+
+                      options = 2;
+                      isActive = true;
+                      gen_step = -1;
+
+                      packsLoop();
+                    }
+                    else if(gen_step == -1){
+                      setTimeout(packsLoop, 0);
+                    }
+                    else if(gen_step == 1){
+                      isActive = false;
+                      gen_step = -1;
+                      looperony();
+                    }
+                    else if(gen_step == 2){
+                      isActive = false;
+                      if(player.gold >= 1000){
+                        player.gold -= 1000;
+
+                        buyPack();
+
+                        function buyPack(){
+                          let pack = [];
+
+
+                          pack.push(allCardsCategory["Job"](player.job));
+                          if(Math.floor(Math.random() * 2)) pack.push(allCardsCategory["Job"]("Any"));
+                          else pack.push(allCardsCategory["Job"](player.job));
+                          pack.push(allCardsCategory["Job"]("Any"));
+                          pack.push(allCardsCategory["Job"]("Any"));
+                          pack.push(allCardsCategory["Job"]("Any"));
+
+                          gen_step = 0;
+
+                          let remaining = 3;
+
+                          packerLoop();
+
+                          function packerLoop(){
+                            if(gen_step == 0){
+                              clearText();
+                              options = pack.length;
+                              isActive = true;
+
+                              for(let i = options; i > 0; i--){
+                                addText("<span style='color: purple;'>(" + i + ")</span> " + pack[i-1].name + ": " + pack[i-1].description);
+                              }
+                              addText("Choose three: " + remaining);
+
+                              gen_step = -1;
+                              packerLoop();
+                            }
+                            else if(gen_step == -1){
+                              setTimeout(packerLoop, 0);
+                            }
+                            else if(gen_step != 0){
+                              isActive = false;
+                              pushCard(pack[gen_step - 1].name, player);
+                              pack.splice(gen_step - 1, 1);
+                              remaining--;
+                              gen_step = 0;
+                              if(remaining == 0){
+                                packsLoop();
+                              } else{
+                                packerLoop();
+                              }
+                            }
+                          }
+                        }
+                      } else{
+                        gen_step = 0;
+                        packsLoop();
+                      }
+                    }
+                  }
                 } else if(gen_step == -1){
                   options = 3;
                   isActive = true;
@@ -1231,7 +1335,7 @@ function Character(job){
 
   if(job == "warrior"){
     this.name = p_name;
-    this.job = "warrior";
+    this.job = "Warrior";
     this.totalHealth = 125;
     this.totalAttack = 5;
     this.totalMagicA = 1;
@@ -1243,7 +1347,7 @@ function Character(job){
 
   } else if(job == "rogue"){
     this.name = p_name;
-    this.job = "rogue"
+    this.job = "Rogue"
     this.totalHealth = 115;
     this.totalAttack = 3;
     this.totalMagicA = 3;
@@ -1254,7 +1358,7 @@ function Character(job){
     this.slots = 4;
   } else if(job == "mage"){
     this.name = p_name;
-    this.job = "mage";
+    this.job = "Mage";
     this.totalHealth = 100;
     this.totalAttack = 1;
     this.totalMagicA = 5;
