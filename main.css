@@ -52,6 +52,11 @@
   width: 100%;
 }
 
+#player-bottom-info {
+  margin-left: 35%;
+  margin-right: 35%;
+}
+
 /* The Modal (background) */
 .modal {
  display: none; /* Hidden by default */

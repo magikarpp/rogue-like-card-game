@@ -36,8 +36,15 @@
       </div>
 
 			<div id="info" class="center">
-				<p id="current-floor"></p>
-				<p id="info-name"></p>
+				<div id="info-2">
+					<p id="current-floor"></p>
+					<p id="info-name"></p>
+					<div id="player-bottom-info">
+						<p id="player-health-2">&nbsp</p>
+						<p id="player-stamina-2">&nbsp</p>
+						<p id="player-mana-2">&nbsp</p>
+					</div>
+				</div>
 				<button id="deck-list" class="button">Deck List</button>
 				<button id="inventory-list" class="button">Inventory</button>
 			</div>
@@ -48,6 +55,8 @@
 		<div id="deck-modal" class="modal">
 		  <div class="modal-content">
 		    <p id="deck-close" class="close">&times;</p>
+				<p class="center">Deck</p>
+				<hr>
 		    <div id="deck-listing" class="alignedCenterLeft">
 				</div>
 		  </div>
@@ -57,6 +66,7 @@
 		<div id="inventory-modal" class="modal">
 			<div class="modal-content">
 				<p id="inventory-close" class="close">&times;</p>
+				<p class="center">Inventory</p>
 				<p id="item-used" class="center"></p>
 				<hr>
 				<div id="inventory-listing" class="alignedCenterLeft">

@@ -62,6 +62,8 @@ function initialize(){
   }
 
   document.getElementById("inventory-list").onclick = function(){
+    document.getElementById("item-used").innerHTML = "";
+    inv_step = 0;
     updateInventoryModal();
     paused = true;
     isInventory = true;
@@ -117,7 +119,6 @@ function updateInventoryModal(){
 
   function invLoop(){
     if(inv_step == -1){
-      options = 0;
       inv_step = 0;
       temp_inv = {};
       return;
@@ -154,18 +155,24 @@ function testingFunction(){
 
   p_name = "tester";
   document.getElementById("info-name").innerHTML = p_name;
-  player = new Character("warrior");
+  player = new Character("rogue");
 
   for(let i = 0; i < 3; i++){
-    pushCard("Heavy Attack", player);
+    pushCard("Cycle", player);
   }
 
   addItemToInventory(allItems["Small Health Potion"]());
+  addItemToInventory(allItems["Small Health Potion"]());
+  addItemToInventory(allItems["Small Health Potion"]());
+  addItemToInventory(allItems["Small Health Potion"]());
+  addItemToInventory(allItems["Small Stamina Potion"]());
   addItemToInventory(allItems["Small Stamina Potion"]());
   addItemToInventory(allItems["Small Stamina Potion"]());
   addItemToInventory(allItems["Small Mana Potion"]());
 
   initDeck();
+
+  checkStats();
 
   startFloor(current_floor);
 }
@@ -180,24 +187,29 @@ function initEnemies(){
   allEnemies["Goblin Warchief"] = GoblinWarchief;
 
   function GoblinSoldier(){
-    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(50, 5), randomNum(5, 1), 0, 1, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    let dude = new Enemy(1, 15, randomNum(100, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(35, 5), randomNum(2, 1), 0, 3, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
     pushCard("Heavy Attack", dude);
+    pushCard("Attack", dude);
     pushCard("Attack", dude);
     return dude;
   }
   function SmallGoblin(){
-    let dude = new Enemy(1, randomNum(8, 1), randomNum(50, 5), 90, "Small Goblin", "Goblin", "normal", randomNum(30, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+    let dude = new Enemy(1, 8, randomNum(50, 5), 90, "Small Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
     pushCard("Attack", dude);
     return dude;
   }
   function LargeGoblin(){
-    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 10, "Large Goblin", "Goblin", "normal", randomNum(50, 5), randomNum(3, 1), 0, 2, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    let dude = new Enemy(1, 15, randomNum(100, 5), 10, "Large Goblin", "Goblin", "normal", randomNum(45, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
     pushCard("Heavy Attack", dude);
+    pushCard("Attack", dude);
     return dude;
   }
   function GoblinWarchief(){
-    let dude = new Enemy(1, randomNum(15, 1), randomNum(100, 5), 10, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(10, 5), randomNum(3, 1), 0, 2, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    let dude = new Enemy(1, 50, randomNum(500, 5), 100, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(85, 5), randomNum(5, 1), 0, 5, 0, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
     pushCard("Heavy Attack", dude);
+    pushCard("Heavy Attack", dude);
+    pushCard("Heavy Attack", dude);
+    pushCard("Attack", dude);
     return dude;
   }
 
@@ -210,7 +222,7 @@ function initEnemies(){
 
     let found = false;
     let dude;
-    console.log(array);
+
      while(!found){
        dude = array[Math.floor(Math.random() * array.length)];
        if(boss) found = true;
@@ -238,6 +250,8 @@ function initCards(){
   allCards["Do Nothing"] = DoNothing;
   allCards["Rest"] = Rest;
   allCards["Heavy Attack"] = HeavyAttack;
+  allCards["Cycle"] = Cycle;
+  allCards["Fireball"] = Fireball;
 
   function Attack(){
     let thing = new Card(1, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
@@ -252,7 +266,7 @@ function initCards(){
     thing.effect = function(){
       this.user.currentHealth += 10;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += 50;
+      this.user.currentStamina += 25;
       if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
       this.user.cuurentMana += 25;
       if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
@@ -260,7 +274,20 @@ function initCards(){
     return thing;
   }
   function HeavyAttack(){
-    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 25, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    return thing;
+  }
+  function Cycle(){
+    let thing = new Card(1, undefined, "Cycle", "normal", "Rogue", 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
+    thing.effect = function(){
+      for(let i = 0; i < this.user.slots; i++){
+        setCardAt(i);
+      }
+    };
+    return thing;
+  }
+  function Fireball(){
+    let thing = new Card(1, player, "Fireball", "fire", "Mage", 0, 20, 0, 0, 50, 0, "A ball of fire.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
     return thing;
   }
 }
@@ -269,13 +296,14 @@ function initItems(){
   allItems["Small Health Potion"] = SmallHealthPotion;
   allItems["Small Mana Potion"] = SmallManaPotion;
   allItems["Small Stamina Potion"] = SmallStaminaPotion;
+  allItems["Small Elixir"] = SmallElixir;
 
   allItemsCategory["Level"] = dropItemByLevel;
 
   function SmallHealthPotion(){
     let thing = new Item(1, 25, "Small Health Potion", "Restores minor health");
     thing.effect = function(){
-      player.currentHealth += 25;
+      player.currentHealth += 20;
       if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
     }
     return thing;
@@ -296,6 +324,19 @@ function initItems(){
     }
     return thing;
   }
+  function SmallElixir(){
+    let thing = new Item(1, 15, "Small Elixir", "Minor restore to all stats.");
+    thing.effect = function(){
+      player.currentStamina += 20;
+      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+      player.currentStamina += 35;
+      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+      player.currentStamina += 35;
+      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+    }
+    return thing;
+  }
+
 
   function dropItemByLevel(level){
     let array = [];
@@ -625,6 +666,7 @@ function startBattle(enemies){
 
   document.getElementById("characters").style.display = "block";
   document.getElementById("cards").style.display = "block";
+  document.getElementById("info-2").style.display = "none";
 
   document.getElementById("board").style.backgroundColor = "rgb(255, 250, 250)";
 
@@ -689,7 +731,6 @@ function battle(enemies){
       let temp = false
       for(let i = enemies.length - 1; i >= 0; i--){
         if(enemies[i].currentHealth <= 0){
-          addText("&nbsp");
           addText(enemies[i].deathSpeech());
           removeElement(document.getElementById("enemy" + i));
           dead_enemies.push(enemies[i]);
@@ -788,9 +829,11 @@ function endBattle(result){
         } else{
           //Cleanup Step
           isActive = false;
+          clearText();
 
           document.getElementById("board").style.backgroundColor = "rgb(255, 255, 255)";
           document.getElementById("characters").style.display = "none";
+          document.getElementById("info-2").style.display = "block";
 
           enemies = [];
           dead_enemies = [];
@@ -806,7 +849,7 @@ function endBattle(result){
           addText("&nbsp");
           if(bossFight){
             bossFight = false;
-            startFloor(current_floor);
+            startFloor(++current_floor);
           }
         }
       }
@@ -1163,6 +1206,18 @@ function checkStats(){
   document.getElementById("player-mana").style.marginLeft = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.marginRight = proportions(player.totalMana, player.currentMana, 35) + "%";
   document.getElementById("player-mana").style.backgroundColor = "rgb(150, 235, 255)";
+
+  document.getElementById("player-health-2").style.marginLeft = proportions(player.totalHealth, player.currentHealth, 35) + "%";
+  document.getElementById("player-health-2").style.marginRight = proportions(player.totalHealth, player.currentHealth, 35) + "%";
+  document.getElementById("player-health-2").style.backgroundColor = "rgb(" + colorProportions(player.totalHealth, player.currentHealth, 255) + ",150,0)";
+
+  document.getElementById("player-stamina-2").style.marginLeft = proportions(player.totalStamina, player.currentStamina, 35) + "%";
+  document.getElementById("player-stamina-2").style.marginRight = proportions(player.totalStamina, player.currentStamina, 35) + "%";
+  document.getElementById("player-stamina-2").style.backgroundColor = "rgb(255, 255, 70)";
+
+  document.getElementById("player-mana-2").style.marginLeft = proportions(player.totalMana, player.currentMana, 35) + "%";
+  document.getElementById("player-mana-2").style.marginRight = proportions(player.totalMana, player.currentMana, 35) + "%";
+  document.getElementById("player-mana-2").style.backgroundColor = "rgb(150, 235, 255)";
 }
 
 function randomNum(base, variance){
