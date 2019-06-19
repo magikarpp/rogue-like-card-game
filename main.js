@@ -34,7 +34,7 @@ let allCardsCategory = {};
 let allItems = {};
 let allItemsCategory = {};
 
-let isTesting = false;
+let isTesting = true;
 
 initialize();
 
@@ -277,15 +277,15 @@ function initCards(){
   allCards["Fireball"] = Fireball;
 
   function Attack(){
-    let thing = new Card(1, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
+    let thing = new Card(1, undefined, undefined, "Attack", "normal", "Any", 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
     return thing;
   }
   function DoNothing(){
-    let thing = new Card(1, undefined, "Do Nothing", "normal", "Any", 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
+    let thing = new Card(1, undefined, undefined, "Do Nothing", "normal", "Any", 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
     return thing;
   }
   function Rest(){
-    let thing = new Card(1, undefined, "Rest", "normal", "Any", 0, 0, 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
+    let thing = new Card(1, undefined, undefined, "Rest", "normal", "Any", 0, 0, 0, 0, 0, 0, "Recover health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) sleeps."]);
     thing.effect = function(){
       this.user.currentHealth += 10;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
@@ -297,11 +297,11 @@ function initCards(){
     return thing;
   }
   function HeavyAttack(){
-    let thing = new Card(1, player, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    let thing = new Card(1, undefined, undefined, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
     return thing;
   }
   function Cycle(){
-    let thing = new Card(1, undefined, "Cycle", "normal", "Rogue", 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
+    let thing = new Card(1, undefined, undefined, "Cycle", "normal", "Rogue", 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
     thing.effect = function(){
       for(let i = 0; i < this.user.slots; i++){
         setCardAt(i);
@@ -310,7 +310,7 @@ function initCards(){
     return thing;
   }
   function Fireball(){
-    let thing = new Card(1, player, "Fireball", "fire", "Mage", 0, 20, 0, 0, 50, 0, "A ball of fire.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
+    let thing = new Card(1, undefined, undefined, "Fireball", "fire", "Mage", 0, 20, 0, 0, 50, 0, "A ball of fire.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
     return thing;
   }
 }
@@ -1169,7 +1169,7 @@ function useCard(uCard, tCard, target){
       uCard.user.currentStamina -= uCard.stamina;
       uCard.user.currentMana -= uCard.mana;
     }
-
+    uCard.target = target;
     uCard.effect();
     let pDamage = (uCard.attack + uCard.user.currentAttack) - (tCard.defense + target.currentDefense);
     if(uCard.attack == 0 || pDamage < 0) pDamage = 0;
@@ -1316,9 +1316,10 @@ function Enemy(eLevel, eExp, eGold, eChance, eName, eRace, eType, eHealth, eAtta
   };
 }
 
-function Card(cardLevel, cardUser, cardName, cardType, cardJob, cardAttack, cardMagicA, cardDefense, cardMagicD, cardMana, cardStamina, cardDescription, cardSpeech){
+function Card(cardLevel, cardUser, cardTarget, cardName, cardType, cardJob, cardAttack, cardMagicA, cardDefense, cardMagicD, cardMana, cardStamina, cardDescription, cardSpeech){
   this.level = cardLevel;
   this.user = cardUser;
+  this.target = cardTarget;
   this.name = cardName;
   this.type = cardType;
   this.job = cardJob;
