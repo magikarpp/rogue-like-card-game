@@ -5,12 +5,15 @@ let isTutorial = false;
 let isInventory = false;
 let battleStep = 0;
 let paused = false;
+let shopKeeperLock = false;
+let shopKeeperItems = {};
 
 let current_floor = 1;
 let counter = 0;
 let inv_step = 0;
 let gen_step = 0;
 let options = 0;
+let lock = 0;
 
 let player;
 let p_name = "";
@@ -31,7 +34,7 @@ let allCardsCategory = {};
 let allItems = {};
 let allItemsCategory = {};
 
-let isTesting = true;
+let isTesting = false;
 
 initialize();
 
@@ -47,16 +50,23 @@ function initialize(){
   document.getElementById("deck-list").onclick = function(){
     updateDeckModal();
     paused = true;
+    lock = 0;
+    if(!isActive){
+      lock = 1;
+      isActive = true;
+    }
     document.getElementById("deck-modal").style.display = "block";
   }
   document.getElementById("deck-close").onclick = function(){
     paused = false;
+    if(lock == 1) isActive = false;
     document.getElementById("deck-modal").style.display = "none";
   }
 
   window.onclick = function(event){
     if(event.target == document.getElementById("deck-modal")){
       paused = false;
+      if(lock == 1) isActive = false;
       document.getElementById("deck-modal").style.display = "none";
     }
   }
@@ -67,12 +77,18 @@ function initialize(){
     updateInventoryModal();
     paused = true;
     isInventory = true;
+    lock = 0;
+    if(!isActive){
+      lock = 1;
+      isActive = true;
+    }
     document.getElementById("inventory-modal").style.display = "block";
   }
   document.getElementById("inventory-close").onclick = function(){
     inv_step = -1;
     paused = false;
     isInventory = false;
+    if(lock == 1) isActive = false;
     document.getElementById("inventory-modal").style.display = "none";
   }
 
@@ -81,6 +97,7 @@ function initialize(){
       paused = false;
       isInventory = false;
       inv_step = -1;
+      if(lock == 1) isActive = false;
       document.getElementById("inventory-modal").style.display = "none";
     }
   }
@@ -103,6 +120,8 @@ function updateInventoryModal(){
 
   let position = 1;
   temp_inv = {};
+
+  document.getElementById("player-gold").innerHTML = player.gold + " gold";
 
   for(let key in inventory){
     let value = inventory[key];
@@ -169,6 +188,10 @@ function testingFunction(){
   addItemToInventory(allItems["Small Stamina Potion"]());
   addItemToInventory(allItems["Small Stamina Potion"]());
   addItemToInventory(allItems["Small Mana Potion"]());
+  addItemToInventory(allItems["Small Mana Potion"]());
+  addItemToInventory(allItems["Small Mana Potion"]());
+
+  player.gold += 5000;
 
   initDeck();
 
@@ -187,25 +210,25 @@ function initEnemies(){
   allEnemies["Goblin Warchief"] = GoblinWarchief;
 
   function GoblinSoldier(){
-    let dude = new Enemy(1, 15, randomNum(100, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(35, 5), randomNum(2, 1), 0, 3, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+    let dude = new Enemy(1, 15, randomNum(125, 5), 10, "Goblin Soldier", "Goblin", "normal", randomNum(35, 5), randomNum(2, 1), 0, 3, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
     pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     pushCard("Attack", dude);
     return dude;
   }
   function SmallGoblin(){
-    let dude = new Enemy(1, 8, randomNum(50, 5), 90, "Small Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+    let dude = new Enemy(1, 8, randomNum(75, 5), 90, "Small Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
     pushCard("Attack", dude);
     return dude;
   }
   function LargeGoblin(){
-    let dude = new Enemy(1, 15, randomNum(100, 5), 10, "Large Goblin", "Goblin", "normal", randomNum(45, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    let dude = new Enemy(1, 15, randomNum(125, 5), 10, "Large Goblin", "Goblin", "normal", randomNum(45, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
     pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     return dude;
   }
   function GoblinWarchief(){
-    let dude = new Enemy(1, 50, randomNum(500, 5), 100, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(85, 5), randomNum(5, 1), 0, 5, 0, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
+    let dude = new Enemy(1, 50, randomNum(500, 50), 100, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(85, 5), randomNum(5, 1), 0, 5, 0, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
     pushCard("Heavy Attack", dude);
     pushCard("Heavy Attack", dude);
     pushCard("Heavy Attack", dude);
@@ -298,10 +321,11 @@ function initItems(){
   allItems["Small Stamina Potion"] = SmallStaminaPotion;
   allItems["Small Elixir"] = SmallElixir;
 
-  allItemsCategory["Level"] = dropItemByLevel;
+  allItemsCategory["Drop"] = dropItemByLevel;
+  allItemsCategory["Level"] = randomItemByLevel;
 
   function SmallHealthPotion(){
-    let thing = new Item(1, 25, "Small Health Potion", "Restores minor health");
+    let thing = new Item(1, 25, "Small Health Potion", 90, "Restores minor health");
     thing.effect = function(){
       player.currentHealth += 20;
       if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
@@ -309,7 +333,7 @@ function initItems(){
     return thing;
   }
   function SmallManaPotion(){
-    let thing = new Item(1, 35, "Small Mana Potion", "Restores minor mana");
+    let thing = new Item(1, 35, "Small Mana Potion", 100, "Restores minor mana");
     thing.effect = function(){
       player.currentMana += 50;
       if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
@@ -317,15 +341,15 @@ function initItems(){
     return thing;
   }
   function SmallStaminaPotion(){
-    let thing = new Item(1, 35, "Small Stamina Potion", "Restores minor stamina");
+    let thing = new Item(1, 35, "Small Stamina Potion", 90, "Restores minor stamina");
     thing.effect = function(){
-      player.currentStamina += 50;
+      player.currentStamina += 40;
       if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
     }
     return thing;
   }
   function SmallElixir(){
-    let thing = new Item(1, 15, "Small Elixir", "Minor restore to all stats.");
+    let thing = new Item(1, 15, "Small Elixir", 150, "Minor restore to all stats.");
     thing.effect = function(){
       player.currentStamina += 20;
       if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
@@ -337,7 +361,26 @@ function initItems(){
     return thing;
   }
 
+  function randomItemByLevel(level){
+    let array = [];
+    for(let key in allItems){
+      let value = allItems[key]();
+      if(value.level) if(value.level <= level) array.push(value);
+    }
 
+    let found = false;
+
+    let dude;
+
+    while(!found){
+      dude = array[Math.floor(Math.random() * array.length)];
+      let temp_chance = dude.chance * (1 + (level - dude.level));
+      if(temp_chance > 95) temp_chance = 95;
+      if(temp_chance < Math.floor(Math.random() * 100)) found = true;
+    }
+
+    return dude;
+  }
   function dropItemByLevel(level){
     let array = [];
     for(let key in allItems){
@@ -346,7 +389,9 @@ function initItems(){
     }
 
     let dude = array[Math.floor(Math.random() * array.length)];
-    if((dude.chance * (1 + (level - dude.level))) < Math.floor(Math.random() * 100)) dude = undefined;
+    let temp_chance = dude.chance * (1 + (level - dude.level));
+    if(temp_chance > 80) temp_chance = 80;
+    if(temp_chance < Math.floor(Math.random() * 100)) dude = undefined;
 
     return dude;
   }
@@ -524,15 +569,18 @@ function startFloor(floor){
 
   function loop(){
     if(counter == 800){
-      let path = Math.floor(Math.random() * 1000);
+      // let path = Math.floor(Math.random() * 1000);
+      let path = 350;
+
       if(path >= 0 && path < 100){
         counter = 0;
       }
-      else if(path >= 100 && path < 200){
+      else if(path >= 100 && path < 250){
         initiateBattle(race, false);
       }
-      else if(path >= 200 && path < 250){
+      else if(path >= 250 && path < 300){
         let temp_counter = 0;
+        isActive = false;
         gen_step = 0;
         addText("You found the boss room.");
         bossLoop();
@@ -562,30 +610,176 @@ function startFloor(floor){
           }
         }
       }
-      else if(path >= 250 && path < 300){
-        counter = 0;
+      else if(path >= 300 && path < 375){
+        isActive = false;
+        let temp_counter = 0;
+        gen_step = 0;
+        addText("&nbsp");
+        addText("You hear a whisper from inside a cracked wall.");
+        shopkeepLoop();
+
+        function shopkeepLoop(){
+          if(temp_counter == 650){
+            addText("H.. Hey, " + player.name + ".");
+          } else if(temp_counter == 1100){
+            addText("You looking fo..for some goods?");
+          } else if(temp_counter == 1600){
+            addText("&nbsp");
+            addText("(1) Look at items, (2) Buy Packs, (3) Walk Away.");
+
+            isActive = true;
+            options = 3;
+          }
+          if(paused){
+            setTimeout(shopkeepLoop, 0);
+          } else{
+            if(gen_step != 0){
+              isActive = false;
+              shopKeeperLock = 0;
+              shopKeeperItems = {};
+              looperony();
+
+              function looperony(){
+                if(gen_step == 3){
+                  addText("Until N..Next Time..");
+                  gen_step = 0;
+                  isActive = false;
+                  options = 0;
+                  counter = 0;
+                } else if(gen_step == 1){
+                  gen_step = 0;
+                  itemsLoop();
+
+                  function itemsLoop(){
+                    let temp_items = {};
+                    if(gen_step == 0){
+                      if(shopKeeperLock == 0){
+                        let temp_rand = Math.floor(Math.random() * 4) + 1;
+                        for(let i = 0; i < temp_rand; i++){
+                          let random_item = allItemsCategory["Level"](player.level);
+                          shopKeeperItems[random_item.name] = (shopKeeperItems[random_item.name] || 0) + 1;
+                        }
+                        shopKeeperLock = 1;
+                      }
+
+                      clearText();
+                      let temp_num = 2;
+                      for(let key in shopKeeperItems){
+                        temp_items[temp_num++] = key;
+                      }
+
+                      options = Object.keys(temp_items).length + 1;
+
+                      for(let i = options; i > 1; i--){
+                        addText("<span style='color: purple'>(" + i + ")</span> x" + shopKeeperItems[temp_items[i]] + " " + temp_items[i] + ": " + allItems[temp_items[i]]().cost + " gold.");
+                      }
+
+                      addText("<span style='color: purple;'>(1)</span> Go Back");
+                      addText("Remaining Gold: " + player.gold);
+
+                      isActive = true;
+
+                      gen_step = -1;
+                      setTimeout(itemsLoop, 0);
+
+                    } else if(gen_step == -1){
+                      setTimeout(itemsLoop, 0);
+                    } else if(gen_step == 1){
+                      isActive = false;
+                      gen_step = -1;
+                      looperony();
+                    } else{
+                      let temp_num = 2;
+                      for(let key in shopKeeperItems){
+                        temp_items[temp_num++] = key;
+                      }
+                      isActive = false;
+
+                      let chosenOne = allItems[temp_items[gen_step]]();
+                      if(player.gold > chosenOne.cost){
+                        player.gold -= chosenOne.cost;
+                        addItemToInventory(chosenOne);
+                        addText("&nbsp");
+                        addText(chosenOne.name + " purchased for " + chosenOne.cost + " gold.");
+                        shopKeeperItems[chosenOne.name] = shopKeeperItems[chosenOne.name] - 1;
+                        if(shopKeeperItems[chosenOne.name] == 0){
+                          delete shopKeeperItems[chosenOne.name];
+                        }
+                      } else{
+                        addText("You don't have enough gold for that item.");
+                      }
+
+                      gen_step = 0;
+                      itemsLoop();
+                    }
+                  }
+                } else if(gen_step == 2){
+
+                } else if(gen_step == -1){
+                  options = 3;
+                  isActive = true;
+                  gen_step = 0;
+                  clearText();
+                  addText("(1) Look at items, (2) Buy Packs, (3) Walk Away.");
+                  setTimeout(looperony, 0);
+                } else if(gen_step == 0){
+                  setTimeout(looperony, 0);
+                }
+              }
+            } else{
+              temp_counter++;
+              setTimeout(shopkeepLoop, 0);
+            }
+          }
+        }
       }
-      else if(path >= 300 && path < 400){
-        counter = 0;
-      }
-      else if(path >= 400 && path < 1000){
+      // //TODO: implement choices.
+      // else if(path >= 400 && path < 500){
+      //   gen_step = 0;
+      //   let tem_counter = 0;
+      //   choices();
+      //
+      //   function choices(){
+      //     if(temp_counter == 0){
+      //       addText("&nbsp");
+      //
+      //     } else if(){
+      //
+      //     }
+      //
+      //   }
+      // }
+      else if(path >= 375 && path < 1000){
         myriad();
         function myriad(){
-          let text;
-          let random = Math.floor(Math.random() * 10);
-          if(random == 0) text = "You feel a slight breeze blow past you.";
-          else if(random == 1) text = "An omnious feeling creeps up your back.";
-          else if(random == 2) text = "There is a barred window that you can barely make out whats outside.";
-          else if(random == 3) text = "You come across a stretched out hallway.";
-          else if(random == 4) text = "Candles dimly illuminate your way.";
-          else if(random == 5) text = "The small candles flicker, making the shadows dance.";
-          else if(random == 6) text = "The damp air wraps around your body.";
-          else if(random == 7) text = "You feel eyes watching you from the shadows.";
-          else if(random == 8) text = "The cold, stone walls do not feel inviting.";
-          else if(random == 9) text = "You hear droplets echo in the distance.";
-
           addText("&nbsp");
-          addText(text);
+          let random = Math.floor(Math.random() * 10);
+          if(random >= 0 || random < 5){
+            let texts = [];
+            texts.push("An omnious feeling creeps up your back.");
+            texts.push("You feel a slight breeze blow past you.");
+            texts.push("You feel eyes watching you from the shadows.");
+            texts.push("Candles dimly illuminate your way.");
+            texts.push("You hear droplets echo in the distance.");
+
+            let randomo = Math.floor(Math.random() * texts.length);
+            addText(texts[randomo]);
+          } else if(random >= 5 || random < 8){
+            let texts = [];
+            texts.push("There is a barred window that you can barely make out whats outside.");
+            texts.push("The small candles flicker, making the shadows dance.");
+            texts.push("The damp air wraps around your body.");
+
+            let randomo = Math.floor(Math.random() * texts.length);
+            addText(texts[randomo]);
+          } else if(random >=8 || random < 10){
+            let texts = [];
+            texts.push("You come across a stretched out hallway.");
+            texts.push("The cold, stone walls do not feel inviting.");
+
+            let randomo = Math.floor(Math.random() * texts.length);
+          }
+
           counter = 0;
         }
       }
@@ -858,7 +1052,7 @@ function endBattle(result){
 }
 
 function loot(level){
-  return allItemsCategory["Level"](level);
+  return allItemsCategory["Drop"](level);
 }
 
 function addItemToInventory(item){
@@ -1073,7 +1267,7 @@ function Character(job){
 
   this.level = 1;
   this.totalExp = 100;
-  this.gold = 0;
+  this.gold = 1000;
   this.currentExp = 0;
   this.currentHealth = this.totalHealth;
   this.currentAttack = this.totalAttack;
@@ -1143,9 +1337,10 @@ function Card(cardLevel, cardUser, cardName, cardType, cardJob, cardAttack, card
   this.description = cardDescription;
 }
 
-function Item(level, chance, name, description){
+function Item(level, chance, name, cost, description){
   this.level = level;
   this.name = name;
+  this.cost = cost;
   this.chance = chance;
   this.description = description;
   this.effect = function(){ };
@@ -1266,6 +1461,7 @@ function gameOver(){
   isBattle = false;
   isActive = false;
   isStart = false;
+  location.reload(true);
 }
 
 //Set proportions for margin %
