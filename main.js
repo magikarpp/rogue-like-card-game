@@ -36,7 +36,7 @@ let allItemsCategory = {};
 let allStatus = {};
 let allStatusCategory = {};
 
-let isTesting = true;
+let isTesting = false;
 
 initialize();
 
@@ -320,6 +320,12 @@ function initEnemies(){
   allEnemies["Goblin Warchief"] = GoblinWarchief;
   allEnemies["Goblin Wolfrider"] = GoblinWolfrider;
 
+  allEnemies["Small Zombie"] = SmallZombie;
+  allEnemies["Large Zombie"] = LargeZombie;
+  allEnemies["Abomination"] = Abomination;
+  allEnemies["Necromancer"] = Necromancer;
+  allEnemies["Zombie Dragon"] = ZombieDragon;
+
   function GoblinSoldier(){
     let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Goblin Soldier", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 2, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
     pushCard("Heavy Attack", dude);
@@ -328,12 +334,12 @@ function initEnemies(){
     return dude;
   }
   function SmallGoblin(){
-    let dude = new Enemy(1, 18, randomNum(75, 5), 95, "Small Goblin", "Goblin", "normal", randomNum(15, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+    let dude = new Enemy(1, 10, randomNum(75, 5), 95, "Small Goblin", "Goblin", "normal", randomNum(15, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
     pushCard("Attack", dude);
     return dude;
   }
   function LargeGoblin(){
-    let dude = new Enemy(1, 8, randomNum(125, 5), 3, "Large Goblin", "Goblin", "normal", randomNum(30, 5), randomNum(3, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+    let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Large Goblin", "Goblin", "normal", randomNum(30, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
     pushCard("Heavy Attack", dude);
     pushCard("Attack", dude);
     return dude;
@@ -343,11 +349,12 @@ function initEnemies(){
     pushCard("Attack", dude);
     pushCard("Sm. Bandaid", dude);
     pushCard("Minor Def. Buff", dude);
+    pushCard("Minor Atk. Buff", dude);
     pushCard("Small Energy Ball", dude);
     return dude;
   }
   function GoblinWolfrider(){
-    let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Wolfrider", "Goblin", "normal", randomNum(37, 3), randomNum(3, 1), 0, 1, 0, [], ["You spot a goblin riding a wolf.", "A Goblin Wolfrider appears before you."], [], ["Goblin Wolfrider rides away."]);
+    let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Wolfrider", "Goblin", "normal", randomNum(34, 3), randomNum(3, 1), 0, 1, 0, [], ["You spot a goblin riding a wolf.", "A Goblin Wolfrider appears before you."], [], ["Goblin Wolfrider rides away."]);
     pushCard("Attack", dude);
     pushCard("Bite", dude);
     pushCard("Bite", dude);
@@ -365,11 +372,51 @@ function initEnemies(){
     return dude;
   }
 
+  function SmallZombie(){
+    let dude = new Enemy(1, 14, randomNum(105, 5), 80, "Small Zombie", "Undead Zombie", "normal", randomNum(24, 3), 1, 0, -1, 0, [], ["You smell a rotten stench approach you.", "A Small Zombie stands in your way."], [], ["Small Zombie collapses."]);
+    pushCard("Attack", dude);
+    pushCard("Attack", dude);
+    pushCard("Bite", dude);
+    return dude;
+  }
+  function LargeZombie(){
+    let dude = new Enemy(1, 20, randomNum(145, 5), 15, "Large Zombie", "Undead Zombie", "normal", randomNum(32, 3), randomNum(2, 1), 0, 0, 0, [], ["You smell a rotten stench approach you.", "A Large Zombie stands in your way.", "You stumble across a Large Zombie."], [], ["Large Zombie collapses."]);
+    pushCard("Attack", dude);
+    pushCard("Heavy Attack", dude);
+    pushCard("Bite", dude);
+    return dude;
+  }
+  function Abomination(){
+    let dude = new Enemy(1, 25, randomNum(155, 5), 10, "Abomination", "Undead Zombie", "normal", randomNum(40, 5), randomNum(2, 1), 0, 3, 0, [], ["An abomination of an Abomination glares your way.", "What in Abomination?", "An indescribably hideous zombie stands in your way."], [], ["Abomination disinigrates"]);
+    pushCard("Attack", dude);
+    return dude;
+  }
+  function Necromancer(){
+    let dude = new Enemy(1, 28, randomNum(175, 5), 10, "Necromancer", "Zombie", "normal", randomNum(22, 2), 1, randomNum(3, 1), 0, 3, [], ["A Necromancer flaunts its staff at you.", "You hear a Necromancer's chant nearby.", "Necromancer summons zombies."], [], ["Necromancer collapses."]);
+    pushCard("Small Energy Ball", dude);
+    pushCard("Sm. Bandaid", dude);
+    pushCard("Minor Def. Curse", dude);
+    pushCard("Minor Atk. Curse", dude);
+
+    return dude;
+  }
+  function ZombieDragon(){
+    let dude = new Enemy(1, 70, randomNum(1020, 50), 100, "Zombie Dragon", "Undead Dragon Zombie-Boss", "normal", randomNum(60, 5), randomNum(4, 1), randomNum(4, 1), 2, 4, [], ["Zombie Dragon roars at your appearance.", "Zombie Dragon glares towards you.", "You spot a rotting Zombie Dragon."], [], ["Zombie Dragon falls to its demise."]);
+    pushCard("Bite", dude);
+    pushCard("Bite", dude);
+    pushCard("Bite", dude);
+    pushCard("Rest", dude);
+    pushCard("Roar", dude);
+    pushCard("Poison Breath", dude);
+    return dude;
+  }
+
   function Race(race, boss){
     let array = [];
     for(let key in allEnemies){
       let value = allEnemies[key]();
-      if(value.race) if(value.race == race) array.push(value);
+      if(boss){ if(value.race) if(value.race.includes(race + "-Boss")) array.push(value); }
+      else{ if(value.race) if(!value.race.includes("-Boss")) if(value.race.includes(race)) array.push(value); }
     }
 
     let found = false;
@@ -386,7 +433,8 @@ function initEnemies(){
      return dude;
   }
   function Count(race){
-    if(race == "Goblin") return 4;
+    if(race == "Goblin") return 3;
+    else if(race == "Zombie") return 2;
     else return 2;
   }
 
@@ -394,7 +442,10 @@ function initEnemies(){
     let array = [];
     for(let key in allEnemies){
       let value = allEnemies[key]();
-      if(value.level) if(value.level == level) if(!value.race.includes("-Boss")) if(!array.includes(value.race)) array.push(value.race);
+      if(value.level) if(value.level == level) if(!value.race.includes("-Boss")){
+        let races = value.race.split(" ");
+        if(!array.includes(races[races.length - 1])) array.push(races[races.length - 1]);
+      }
     }
 
     return array[Math.floor(Math.random() * array.length)];
@@ -402,15 +453,22 @@ function initEnemies(){
 }
 
 function initCards(){
+  //Job: Any
+  //Lvl: 1
   allCards["Attack"] = Attack;
-  allCards["Throw"] = Throw;
+  allCards["Attack1"] = Attack;
   allCards["Do Nothing"] = DoNothing;
   allCards["Do Nothing1"] = DoNothing;
   allCards["Rest"] = Rest;
+  allCards["Rest1"] = Rest;
   allCards["Sm. Bandaid"] = SmallBandaid;
   allCards["Minor Atk. Buff"] = MinorAttackBuff;
   allCards["Minor Def. Buff"] = MinorDefenseBuff;
+  allCards["Minor Atk. Curse"] = MinorAttackCurse;
+  allCards["Minor Def. Curse"] = MinorDefenseCurse;
   allCards["Small Energy Ball"] = SmallEnergyBall;
+  //Lvl:2
+  allCards["Poison Breath"] = PoisonBreath;
 
   allCards["Bite"] = Bite;
   allCards["Roar"] = Roar;
@@ -454,7 +512,7 @@ function initCards(){
     return thing;
   }
   function SmallBandaid(){
-    let thing = new Card(1, "Sm. Bandaid", "normal", "Any", 0, 0, 0, 0, 0, 20, "Recover minor health.", ["(you) puts on a bandaid"]);
+    let thing = new Card(1, "Sm. Bandaid", "normal", "Any", 0, 0, 0, 0, 0, 20, "Recover minor health.", ["(you) puts on a bandaid."]);
     thing.effect = function(){
       this.user.currentHealth += 20;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
@@ -462,21 +520,42 @@ function initCards(){
     return thing;
   }
   function MinorAttackBuff(){
-    let thing = new Card(1, "Minor Atk. Buff", "normal", "Any", 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you) feels a slight surge of energy.", "(you) feels slightly stronger."]);
+    let thing = new Card(1, "Minor Atk. Buff", "normal", "Any", 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you)'s attacks feels a slight surge of aggression.", "(you)'s attacks feels slightly stronger."]);
     thing.effect = function(){
       pushStatus("Attack Buff", 1, this.user);
     };
     return thing;
   }
   function MinorDefenseBuff(){
-    let thing = new Card(1, "Minor Def. Buff", "normal", "Any", 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you) feels slightly sturdier.", "(you) feels slightly stronger."]);
+    let thing = new Card(1, "Minor Def. Buff", "normal", "Any", 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you)'s defense feels slightly sturdier.", "(you)'s defense feels slightly stronger."]);
     thing.effect = function(){
       pushStatus("Defense Buff", 1, this.user);
     };
     return thing;
   }
+  function MinorAttackCurse(){
+    let thing = new Card(1, "Minor Atk. Curse", "normal", "Any", 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy) attack feels weaker from curse."]);
+    thing.effect = function(){
+      pushStatus("Attack Curse", 1, this.target);
+    };
+    return thing;
+  }
+  function MinorDefenseCurse(){
+    let thing = new Card(1, "Minor Def. Curse", "normal", "Any", 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy).", "(enemy) defense feels weaker from curse."]);
+    thing.effect = function(){
+      pushStatus("Defense Curse", 1, this.target);
+    };
+    return thing;
+  }
   function SmallEnergyBall(){
     let thing = new Card(1, "Small Energy Ball", "normal", "Any", 0, 8, 0, 0, 0, 35, "A ball of energy.", ["(you) shoot out a ball of energy."]);
+    return thing;
+  }
+  function PoisonBreath(){
+    let thing = new Card(2, "PoisonBreath", "poison", "Any", 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) breathes poison onto (enemy).", "(you) covers (enemy) in poison."]);
+    thing.effect = function(){
+      pushStatus("Poison", 1, this.target);
+    };
     return thing;
   }
 
@@ -490,7 +569,7 @@ function initCards(){
     this.endEffect = function(){
       if(this.target){
         if(this.target.currentDefense < 4){
-          this.user.currentAttack -= 2;
+          this.attack += 2;
         }
       }
     };
@@ -507,7 +586,7 @@ function initCards(){
   }
 
   function HeavyAttack(){
-    let thing = new Card(1, "Heavy Attack", "normal", "Warrior", 10, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    let thing = new Card(1, "Heavy Attack", "normal", "Warrior", 12, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
     return thing;
   }
   function BloodStrike(){
@@ -554,10 +633,13 @@ function initCards(){
     thing.effect = function(){
       let dude = allItemsCategory["Drop"](this.target.level);
       if(!dude) dude = allItemsCategory["Drop"](this.target.level);
+      if(!dude) dude = allItemsCategory["Drop"](this.target.level);
       if(dude){
         addText("Sucessfully stole " + dude.name + ".");
         addItemToInventory(dude);
-      };
+      } else{
+        addText("Found nothing to steal.");
+      }
     };
     return thing;
   }
@@ -596,7 +678,7 @@ function initCards(){
     let array = [];
     for(let key in allCards){
       let value = allCards[key]();
-      if(value) if(value.job == job) array.push(value);
+      if(value) if(value.job == job) if(value.level <= player.level) array.push(value);
     }
 
     let found = false;
@@ -699,9 +781,11 @@ function initStatus(){
   allStatus["Bleed"] = Bleed;
   allStatus["Attack Buff"] = AttackBuff;
   allStatus["Defense Buff"] = DefenseBuff;
+  allStatus["Attack Curse"] = AttackCurse;
+  allStatus["Defense Curse"] = DefenseCurse;
 
   function Burn(level){
-    let thing = new Status(level, undefined, "Burn", 3, "	rgb(217, 38, 110)", "(you) takes damage from Burn status.");
+    let thing = new Status(level, "Burn", 3, "	rgb(217, 38, 110)", "(you) takes damage from Burn status.");
     thing.effect = function(){
       let damage = (5 * this.level) - this.user.currentDefense;
       if(damage < 0) damage = 0;
@@ -710,7 +794,7 @@ function initStatus(){
     return thing;
   }
   function Poison(level){
-    let thing = new Status(level, undefined, "Poison", 3, "rgb(179, 255, 179)", "(you) takes damage from Poison status.");
+    let thing = new Status(level, "Poison", 3, "rgb(179, 255, 179)", "(you) takes damage from Poison status.");
     thing.effect = function(){
       let damage = (5 * this.level) - this.user.currentMagicD;
       if(damage < 0) damage = 0;
@@ -719,7 +803,7 @@ function initStatus(){
     return thing;
   }
   function Bleed(level){
-    let thing = new Status(level, undefined, "Bleed", 5, "	rgb(255, 102, 163)", "(you) takes damage from Bleed status.");
+    let thing = new Status(level, "Bleed", 5, "	rgb(255, 102, 163)", "(you) takes damage from Bleed status.");
     thing.effect = function(){
       let damage = (2 * this.level);
       if(damage < 0) damage = 0;
@@ -728,7 +812,7 @@ function initStatus(){
     return thing;
   }
   function AttackBuff(level){
-    let thing = new Status(level, undefined, "Attack Buff", 3, "rgb(102, 194, 255)", " ");
+    let thing = new Status(level, "Attack Buff", 3, "rgb(102, 194, 255)", " ");
     thing.effect = function(){
       let buff = (2 * this.level);
       this.user.currentAttack += buff;
@@ -742,7 +826,7 @@ function initStatus(){
     return thing;
   }
   function DefenseBuff(level){
-    let thing = new Status(level, undefined, "Defense Buff", 3, "rgb(102, 194, 255)", " ");
+    let thing = new Status(level, "Defense Buff", 3, "rgb(102, 194, 255)", " ");
     thing.effect = function(){
       let buff = (2 * this.level);
       this.user.currentDefense += buff;
@@ -755,17 +839,45 @@ function initStatus(){
     }
     return thing;
   }
+  function AttackCurse(level){
+    let thing = new Status(level, "Attack Curse", 3, "rgb(153, 102, 102)", " ");
+    thing.effect = function(){
+      let curse = (2 * this.level);
+      this.user.currentAttack -= curse;
+      this.user.currentMagicA -= curse;
+    }
+    this.endEffect = function(){
+      let curse = (2 * this.level);
+      this.user.currentAttack += curse;
+      this.user.currentMagicA += curse;
+    }
+    return thing;
+  }
+  function DefenseCurse(level){
+    let thing = new Status(level, "Defense Curse", 3, "rgb(153, 153, 102)", " ");
+    thing.effect = function(){
+      let curse = (2 * this.level);
+      this.user.currentDefense -= curse;
+      this.user.currentMagicD -= curse;
+    }
+    this.endEffect = function(){
+      let curse = (2 * this.level);
+      this.user.currentDefense += curse;
+      this.user.currentMagicD += curse;
+    }
+    return thing;
+  }
 }
 
 function initDeck(){
   for(let i = 0; i < 10; i++){
     pushCard("Attack", player);
   }
-  for(let i = 0; i < 5; i++){
+  for(let i = 0; i < 6; i++){
     pushCard("Do Nothing1", player);
   }
 
-  for(let i = 0; i < 5; i++){
+  for(let i = 0; i < 6; i++){
     pushCard("Rest", player);
   }
 }
@@ -864,7 +976,7 @@ function FloorOne(){
                 addText("&nbsp");
                 addText("One door has a sign - \"Tutorial\"; the other - \"Floor 1\".");
               }
-              if(counter == 3000){
+              if(counter == 3600){
                 options = 2;
                 isActive = true;
                 addText("&nbsp");
@@ -920,13 +1032,13 @@ function startFloor(floor){
       let path = Math.floor(Math.random() * 1000);
       // let path = 125;
 
-      if(path >= 0 && path < 100){
+      if(path >= 0 && path < 50){
         counter = 0;
       }
-      else if(path >= 100 && path < 250){
+      else if(path >= 50 && path < 300){
         initiateBattle(race, false);
       }
-      else if(path >= 250 && path < 300){
+      else if(path >= 300 && path < 350){
         let temp_counter = 0;
         isActive = false;
         gen_step = 0;
@@ -958,7 +1070,7 @@ function startFloor(floor){
           }
         }
       }
-      else if(path >= 300 && path < 375){
+      else if(path >= 350 && path < 450){
         isActive = false;
         let temp_counter = 0;
         gen_step = 0;
@@ -1020,11 +1132,11 @@ function startFloor(floor){
                       options = Object.keys(temp_items).length + 1;
 
                       for(let i = options; i > 1; i--){
-                        addText("<span style='color: purple'>(" + i + ")</span> x" + shopKeeperItems[temp_items[i]] + " " + temp_items[i] + ": " + allItems[temp_items[i]]().cost + " gold.");
+                        addText("<span style='color: purple'>(" + i + ")</span> x" + shopKeeperItems[temp_items[i]] + " " + temp_items[i] + ": " + allItems[temp_items[i]]().cost + " gold.", true);
                       }
 
-                      addText("<span style='color: purple;'>(1)</span> Go Back");
-                      addText("Remaining Gold: " + player.gold);
+                      addText("<span style='color: purple;'>(1)</span> Go Back", true);
+                      addText("Remaining Gold: " + player.gold, true);
 
                       isActive = true;
 
@@ -1048,14 +1160,14 @@ function startFloor(floor){
                       if(player.gold > chosenOne.cost){
                         player.gold -= chosenOne.cost;
                         addItemToInventory(chosenOne);
-                        addText("&nbsp");
-                        addText(chosenOne.name + " purchased for " + chosenOne.cost + " gold.");
+                        addText("&nbsp", true);
+                        addText(chosenOne.name + " purchased for " + chosenOne.cost + " gold.", true);
                         shopKeeperItems[chosenOne.name] = shopKeeperItems[chosenOne.name] - 1;
                         if(shopKeeperItems[chosenOne.name] == 0){
                           delete shopKeeperItems[chosenOne.name];
                         }
                       } else{
-                        addText("You don't have enough gold for that item.");
+                        addText("You don't have enough gold for that item.", true);
                       }
 
                       gen_step = 0;
@@ -1069,9 +1181,9 @@ function startFloor(floor){
                   function packsLoop(){
                     if(gen_step == 0){
                       clearText();
-                      addText("<span style='color: purple'>(2)</span> Buy Pack: 1000 gold.");
-                      addText("<span style='color: purple'>(1)</span> Go Back");
-                      addText("Remaining Gold: " + player.gold);
+                      addText("<span style='color: purple'>(2)</span> Buy Pack: 1000 gold.", true);
+                      addText("<span style='color: purple'>(1)</span> Go Back", true);
+                      addText("Remaining Gold: " + player.gold, true);
 
                       options = 2;
                       isActive = true;
@@ -1118,9 +1230,9 @@ function startFloor(floor){
                               isActive = true;
 
                               for(let i = options; i > 0; i--){
-                                addText("<span style='color: purple;'>(" + i + ")</span> " + pack[i-1].name + ": " + pack[i-1].description);
+                                addText("<span style='color: purple;'>(" + i + ")</span> " + pack[i-1].name + ": " + pack[i-1].description, true);
                               }
-                              addText("Choose three: " + remaining);
+                              addText("Choose three: " + remaining, true);
 
                               gen_step = -1;
                               packerLoop();
@@ -1182,7 +1294,7 @@ function startFloor(floor){
       //
       //   }
       // }
-      else if(path >= 375 && path < 1000){
+      else if(path >= 450 && path < 1000){
         myriad();
         function myriad(){
           addText("&nbsp");
@@ -1237,10 +1349,15 @@ function tutorial(){
 
   function loop(){
     if(counter == 400) addText("You push open the door labeled \"Tutorial\".");
-    if(counter == 1200) addText("But then realize that the dev sucks and hasn't added this yet.");
-    if(counter == 2200) addText("(sorry).");
-    if(counter == 3000) addText("You wonder what that was all about and head to the first floor...");
-    if(counter == 4000){
+    if(counter == 1200) addText("But then realize that the dev hasn't added a real tutorial yet.");
+    if(counter == 2100) addText("(sorry).");
+    if(counter == 2600) addText("Some tips though:");
+    if(counter == 3200) addText("1) Green bar is Health, yellow bar is Stamina, blue bar is Mana, and Pink bar is experience points.");
+    if(counter == 4400) addText("2) You can press \"i\" and \"d\" at anytime to open/close inventory and deck list.");
+    if(counter == 5400) addText("3) (Add more to this list?).");
+    if(counter == 6000) addText("(sorry again).");
+    if(counter == 6600) addText("You wonder what that was about and continue onwards.");
+    if(counter == 7500){
       startFloor(current_floor);
     } else{
       if(paused){
@@ -1297,8 +1414,8 @@ function initiateBattle(race, boss){
 
   if(boss){
     if(Math.floor(Math.random() * (6 - enemy_amount))) enemies.push(allEnemiesCategory["Race"](race, false));
-    enemies.push(allEnemiesCategory["Race"]((race + "-Boss"), true));
-    if(Math.floor(Math.random() * (6 - enemy_amount))) enemies.push(allEnemiesCategory["Race"](race, false));
+    enemies.push(allEnemiesCategory["Race"]((race), true));
+    if(enemy_amount > 2) if(Math.floor(Math.random() * (6 - enemy_amount))) enemies.push(allEnemiesCategory["Race"](race, false));
   } else{
     let looper = Math.floor(Math.random() * enemy_amount) + 1;
     for(let i = 0; i < looper; i++){
@@ -1526,12 +1643,12 @@ function endBattle(result){
               return;
             }
             clearText();
-            addText("<span style='color: purple;'>(4)</span> Endurance: Defense, Magic Defense");
-            addText("<span style='color: purple;'>(3)</span> Aggression: Damage, Magic Damage");
-            addText("<span style='color: purple;'>(2)</span> Intellgence: HP, Mana.");
-            addText("<span style='color: purple;'>(1)</span> Strength: HP, Stamina");
-            addText("Remaining Points: " + points);
-            addText("You Leveled Up!");
+            addText("<span style='color: purple;'>(4)</span> Endurance: Defense, Magic Defense", true);
+            addText("<span style='color: purple;'>(3)</span> Aggression: Damage, Magic Damage", true);
+            addText("<span style='color: purple;'>(2)</span> Intellgence: HP, Mana.", true);
+            addText("<span style='color: purple;'>(1)</span> Strength: HP, Stamina", true);
+            addText("Remaining Points: " + points, true);
+            addText("You Leveled Up!", true);
 
             isActive = true;
             options = 4;
@@ -1795,7 +1912,7 @@ function Character(job){
     this.totalHealth = 125;
     this.totalAttack = 5;
     this.totalMagicA = 1;
-    this.totalDefense = 5;
+    this.totalDefense = 3;
     this.totalMagicD = 1;
     this.totalMana = 60;
     this.totalStamina = 125;
@@ -1807,8 +1924,8 @@ function Character(job){
     this.totalHealth = 115;
     this.totalAttack = 3;
     this.totalMagicA = 3;
-    this.totalDefense = 3;
-    this.totalMagicD = 3;
+    this.totalDefense = 2;
+    this.totalMagicD = 2;
     this.totalMana = 90;
     this.totalStamina = 90;
     this.slots = 4;
@@ -1819,7 +1936,7 @@ function Character(job){
     this.totalAttack = 1;
     this.totalMagicA = 5;
     this.totalDefense = 1;
-    this.totalMagicD = 5;
+    this.totalMagicD = 3;
     this.totalMana = 125;
     this.totalStamina = 65;
     this.slots = 3;
@@ -1827,7 +1944,7 @@ function Character(job){
 
   this.level = 1;
   this.totalExp = 100;
-  this.gold = 1000;
+  this.gold = randomNum(950, 49);
   this.currentExp = 0;
   this.currentHealth = this.totalHealth;
   this.currentAttack = this.totalAttack;
@@ -1899,9 +2016,9 @@ function Card(cardLevel, cardName, cardType, cardJob, cardAttack, cardMagicA, ca
   this.description = cardDescription;
 }
 
-function Status(level, user, name, count, color, speech){
+function Status(level, name, count, color, speech){
   this.level = level;
-  this.user = user;
+  this.user = undefined;
   this.name = name;
   this.count = count;
   this.color = color;
@@ -1920,14 +2037,20 @@ function Item(level, chance, name, cost, description){
 }
 
 
-function addText(text){
+function addText(text, fade){
   if(text != " "){
     let newP = document.createElement("p");
     newP.innerHTML = text;
     document.getElementById("text").prepend(newP);
-    for(let i = 0; i < document.getElementById("text").childElementCount; i++){
-      let color = i * 18;
-      document.getElementById("text").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
+    if(!fade){
+      for(let i = 0; i < document.getElementById("text").childElementCount; i++){
+        let color = i * 18;
+        document.getElementById("text").children.item(i).style.color = "rgb(" + color + "," + color + "," + color + ")"
+      }
+    } else{
+      for(let i = 0; i < document.getElementById("text").childElementCount; i++){
+        document.getElementById("text").children.item(i).style.color = "rgb(0, 0, 0)";
+      }
     }
     if(document.getElementById("text").childElementCount > 11){
       for(let i = 0; i < document.getElementById("text").childElementCount - 11; i++){
