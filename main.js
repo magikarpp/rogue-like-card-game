@@ -1299,28 +1299,36 @@ function startFloor(floor){
         function myriad(){
           addText("&nbsp");
           let random = Math.floor(Math.random() * 10);
-          if(random >= 0 || random < 5){
+          if(random >= 0 && random < 5){
             let texts = [];
             texts.push("An omnious feeling creeps up your back.");
             texts.push("You feel a slight breeze blow past you.");
             texts.push("You feel eyes watching you from the shadows.");
             texts.push("Candles dimly illuminate your way.");
             texts.push("You hear droplets echo in the distance.");
+            texts.push("You make your way to the next room.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
-          } else if(random >= 5 || random < 8){
+          } else if(random >= 5 && random < 8){
             let texts = [];
             texts.push("There is a barred window that you can barely make out whats outside.");
             texts.push("The small candles flicker, making the shadows dance.");
             texts.push("The damp air wraps around your body.");
+            texts.push("You see movement in the shadows.");
+            texts.push("Water splashes as you step in a puddle.");
+            texts.push("You push through an old, rotting door.");
+            texts.push("Rats scurry away as you enter the next room.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
-          } else if(random >=8 || random < 10){
+          } else if(random >= 8 && random < 10){
             let texts = [];
+            texts.push("Something smells rotten.");
+            texts.push("There are broken pieces of glass and wood on the floor.");
             texts.push("You come across a stretched out hallway.");
             texts.push("The cold, stone walls do not feel inviting.");
+            texts.push("Moonlight pierces through the cracks of the barred window.")
 
             let randomo = Math.floor(Math.random() * texts.length);
           }
