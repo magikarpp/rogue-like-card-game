@@ -706,7 +706,7 @@ function initItems(){
   allItemsCategory["Level"] = randomItemByLevel;
 
   function SmallHealthPotion(){
-    let thing = new Item(1, 25, "Small Health Potion", 90, "Restores minor health");
+    let thing = new Item(1, 35, "Small Health Potion", 90, "Restores minor health");
     thing.effect = function(){
       player.currentHealth += 25;
       if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
@@ -732,7 +732,7 @@ function initItems(){
   function SmallElixir(){
     let thing = new Item(1, 15, "Small Elixir", 150, "Minor restore to all stats.");
     thing.effect = function(){
-      player.currentHealth += 25;
+      player.currentHealth += 35;
       if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
       player.currentStamina += 35;
       if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
@@ -1716,7 +1716,7 @@ function endBattle(result){
               player.currentMana += 25;
             } else if(gen_step == 3){
               player.totalAttack += 2;
-              player.currentAttack += 25;
+              player.currentAttack += 2;
               player.totalMagicA += 2;
               player.currentMagicA += 2;
             } else if(gen_step == 4){
