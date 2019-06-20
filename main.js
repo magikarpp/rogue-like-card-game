@@ -714,7 +714,7 @@ function initItems(){
     return thing;
   }
   function SmallManaPotion(){
-    let thing = new Item(1, 35, "Small Mana Potion", 100, "Restores minor mana");
+    let thing = new Item(1, 45, "Small Mana Potion", 100, "Restores minor mana");
     thing.effect = function(){
       player.currentMana += 50;
       if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
@@ -736,8 +736,8 @@ function initItems(){
       if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
       player.currentStamina += 35;
       if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
-      player.currentStamina += 35;
-      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+      player.currentMana += 35;
+      if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
     }
     return thing;
   }
