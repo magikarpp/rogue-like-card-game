@@ -113,7 +113,6 @@ function initialize(){
 }
 
 function testingFunction(){
-  isStart = true;
   isActive = true;
 
   document.getElementById("info").style.visibility = "visible";
@@ -124,6 +123,8 @@ function testingFunction(){
 
   document.getElementById("info-name").innerHTML = p_name;
   player = new Character("warrior");
+
+  isStart = true;
 
   initDeck();
   for(let i = 0; i < 3; i++){
@@ -145,7 +146,7 @@ function testingFunction(){
 
 function buttonPress(event){
   //TODO: implement clicks.
-  if(isActive){
+  if(isStart){
     if(event.key == "i"){
       if(paused){
         inv_step = -1;
@@ -182,7 +183,9 @@ function buttonPress(event){
         document.getElementById("deck-modal").style.display = "block";
       }
     }
-    
+  }
+
+  if(isActive){
     if(paused){
       if(isInventory){
         if(event.key > 0 && event.key < options + 1){
@@ -888,6 +891,7 @@ function initDeck(){
 
 
 function FloorOne(){
+  isActive = false;
   document.getElementById("current-floor").innerHTML = "Floor " + 1;
 
   setName();
@@ -965,16 +969,17 @@ function FloorOne(){
 
             gen_step = 0;
             options = 0;
-            isActive = false;
-
-            document.getElementById("deck-list").style.display = "inline-block";
-            document.getElementById("inventory-list").style.display = "inline-block";
 
             counter = 0;
             loop2();
 
             function loop2(){
-              if(counter == 1000) addText("You pick up some items lying on the floor.");
+              if(counter == 1000){
+                isStart = true;
+                document.getElementById("deck-list").style.display = "inline-block";
+                document.getElementById("inventory-list").style.display = "inline-block";
+                addText("You pick up some items lying on the floor.");
+              }
               if(counter == 1900) addText("You look ahead and see two doors.");
               if(counter == 2800){
                 addText("&nbsp");
@@ -1413,7 +1418,6 @@ function setName(){
 }
 
 function start(){
-  isStart = true;
   FloorOne();
 }
 
