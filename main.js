@@ -145,43 +145,44 @@ function testingFunction(){
 
 function buttonPress(event){
   //TODO: implement clicks.
-  if(event.key == "i"){
-    if(paused){
-      inv_step = -1;
-      paused = false;
-      isInventory = false;
-      if(lock == 1) isActive = false;
-      document.getElementById("inventory-modal").style.display = "none";
-    } else{
-      document.getElementById("item-used").innerHTML = "";
-      inv_step = 0;
-      updateInventoryModal();
-      paused = true;
-      isInventory = true;
-      lock = 0;
-      if(!isActive){
-        lock = 1;
-        isActive = true;
-      }
-      document.getElementById("inventory-modal").style.display = "block";
-    }
-  } else if(event.key == "d"){
-    if(paused){
-      paused = false;
-      if(lock == 1) isActive = false;
-      document.getElementById("deck-modal").style.display = "none";
-    } else{
-      updateDeckModal();
-      paused = true;
-      lock = 0;
-      if(!isActive){
-        lock = 1;
-        isActive = true;
-      }
-      document.getElementById("deck-modal").style.display = "block";
-    }
-  }
   if(isActive){
+    if(event.key == "i"){
+      if(paused){
+        inv_step = -1;
+        paused = false;
+        isInventory = false;
+        if(lock == 1) isActive = false;
+        document.getElementById("inventory-modal").style.display = "none";
+      } else{
+        document.getElementById("item-used").innerHTML = "";
+        inv_step = 0;
+        updateInventoryModal();
+        paused = true;
+        isInventory = true;
+        lock = 0;
+        if(!isActive){
+          lock = 1;
+          isActive = true;
+        }
+        document.getElementById("inventory-modal").style.display = "block";
+      }
+    } else if(event.key == "d"){
+      if(paused){
+        paused = false;
+        if(lock == 1) isActive = false;
+        document.getElementById("deck-modal").style.display = "none";
+      } else{
+        updateDeckModal();
+        paused = true;
+        lock = 0;
+        if(!isActive){
+          lock = 1;
+          isActive = true;
+        }
+        document.getElementById("deck-modal").style.display = "block";
+      }
+    }
+    
     if(paused){
       if(isInventory){
         if(event.key > 0 && event.key < options + 1){
