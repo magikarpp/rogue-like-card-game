@@ -120,7 +120,7 @@ function testingFunction(){
   p_name = "Tester";
 
   document.getElementById("info-name").innerHTML = p_name;
-  player = new Character("rogue");
+  player = new Character("mage");
 
   isStart = true;
 
@@ -515,7 +515,7 @@ function initCards(){
     return thing;
   }
   function SmallBandaid(){
-    let thing = new Card(1, "Sm. Bandaid", "normal", "Any", false, 0, 0, 0, 0, 0, 20, "Recover minor health.", ["(you) puts on a bandaid."]);
+    let thing = new Card(1, "Sm. Bandaid", "normal", "Any", false, 0, 0, 0, 0, 10, 10, "Recover minor health.", ["(you) puts on a bandaid."]);
     thing.effect = function(){
       this.user.currentHealth += 20;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
@@ -616,7 +616,7 @@ function initCards(){
   }
 
   function Cycle(){
-    let thing = new Card(1, "Cycle", "normal", "Rogue", true, 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
+    let thing = new Card(1, "Cycle", "normal", "Rogue", false, 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
     thing.effect = function(){
       for(let i = 0; i < this.user.slots; i++){
         setCardAt(i);
