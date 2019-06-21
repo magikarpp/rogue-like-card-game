@@ -36,7 +36,7 @@ let allItemsCategory = {};
 let allStatus = {};
 let allStatusCategory = {};
 
-let isTesting = true;
+let isTesting = false;
 
 initialize();
 
