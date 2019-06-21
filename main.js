@@ -824,7 +824,7 @@ function initStatus(){
       this.user.currentMagicA += buff;
     }
     this.endEffect = function(){
-      let buff = (1 * this.level) * this.count;
+      let buff = (1 * this.level) * this.totalCount;
       this.user.currentAttack -= buff;
       this.user.currentMagicA -= buff;
     }
@@ -838,7 +838,7 @@ function initStatus(){
       this.user.currentMagicD += buff;
     }
     this.endEffect = function(){
-      let buff = (1 * this.level) * this.count;
+      let buff = (1 * this.level) * this.totalCount;
       this.user.currentDefense -= buff;
       this.user.currentMagicD -= buff;
     }
@@ -852,7 +852,7 @@ function initStatus(){
       this.user.currentMagicA -= curse;
     }
     this.endEffect = function(){
-      let curse = (1 * this.level) * this.count;
+      let curse = (1 * this.level) * this.totalCount;
       this.user.currentAttack += curse;
       this.user.currentMagicA += curse;
     }
@@ -866,7 +866,7 @@ function initStatus(){
       this.user.currentMagicD -= curse;
     }
     this.endEffect = function(){
-      let curse = (1 * this.level) * this.count;
+      let curse = (1 * this.level) * this.totalCount;
       this.user.currentDefense += curse;
       this.user.currentMagicD += curse;
     }
@@ -1664,15 +1664,15 @@ function endBattle(result){
 
   addText(result_text);
 
+  options = 0;
   setTimeout(con, 1500);
 
   function con(){
     addText("<p style='color: purple'>(1) Continue</p>");
     isActive = true;
     gen_step = 0;
+    options = 1;
   }
-
-  options = 1;
 
   loop();
 
@@ -2096,6 +2096,7 @@ function Status(level, name, count, color, speech){
   this.user = undefined;
   this.name = name;
   this.count = count;
+  this.totalCount = count;
   this.color = color;
   this.speech = speech;
   this.effect = function(){ };
