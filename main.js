@@ -828,12 +828,12 @@ function initStatus(){
       this.user.currentMagicA += buff;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
-    }
-    this.endEffect = function(){
+    };
+    thing.endEffect = function(){
       let buff = (1 * this.level) * this.totalCount;
       this.user.currentAttack -= buff;
       this.user.currentMagicA -= buff;
-    }
+    };
     return thing;
   }
   function DefenseBuff(level){
@@ -844,12 +844,12 @@ function initStatus(){
       this.user.currentMagicD += buff;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
-    }
-    this.endEffect = function(){
+    };
+    thing.endEffect = function(){
       let buff = (1 * this.level) * this.totalCount;
       this.user.currentDefense -= buff;
       this.user.currentMagicD -= buff;
-    }
+    };
     return thing;
   }
   function AttackCurse(level){
@@ -860,12 +860,12 @@ function initStatus(){
       this.user.currentMagicA -= curse;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
-    }
-    this.endEffect = function(){
+    };
+    thing.endEffect = function(){
       let curse = (1 * this.level) * this.totalCount;
       this.user.currentAttack += curse;
       this.user.currentMagicA += curse;
-    }
+    };
     return thing;
   }
   function DefenseCurse(level){
@@ -876,12 +876,12 @@ function initStatus(){
       this.user.currentMagicD -= curse;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
-    }
-    this.endEffect = function(){
+    };
+    thing.endEffect = function(){
       let curse = (1 * this.level) * this.totalCount;
       this.user.currentDefense += curse;
       this.user.currentMagicD += curse;
-    }
+    };
     return thing;
   }
 }
