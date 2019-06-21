@@ -113,8 +113,6 @@ function initialize(){
 }
 
 function testingFunction(){
-  isActive = true;
-
   document.getElementById("info").style.visibility = "visible";
   document.getElementById("deck-list").style.display = "inline-block";
   document.getElementById("inventory-list").style.display = "inline-block";
@@ -541,14 +539,14 @@ function initCards(){
     return thing;
   }
   function MinorAttackCurse(){
-    let thing = new Card(1, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy) attack feels weaker from curse."]);
+    let thing = new Card(1, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy)'s attacks feels weaker from curse."]);
     thing.effect = function(){
       pushStatus("Attack Curse", 1, this.target);
     };
     return thing;
   }
   function MinorDefenseCurse(){
-    let thing = new Card(1, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy).", "(enemy) defense feels weaker from curse."]);
+    let thing = new Card(1, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy)'s defense.", "(enemy) defense feels weaker from curse."]);
     thing.effect = function(){
       pushStatus("Defense Curse", 1, this.target);
     };
@@ -819,56 +817,56 @@ function initStatus(){
     return thing;
   }
   function AttackBuff(level){
-    let thing = new Status(level, "Attack Buff", 3, "rgb(102, 194, 255)", " ");
+    let thing = new Status(level, "Attack Buff", 3, "rgb(102, 194, 255)", "(you) has Attack Buff.");
     thing.effect = function(){
-      let buff = (2 * this.level);
+      let buff = (1 * this.level);
       this.user.currentAttack += buff;
       this.user.currentMagicA += buff;
     }
     this.endEffect = function(){
-      let buff = (2 * this.level);
+      let buff = (1 * this.level) * this.count;
       this.user.currentAttack -= buff;
       this.user.currentMagicA -= buff;
     }
     return thing;
   }
   function DefenseBuff(level){
-    let thing = new Status(level, "Defense Buff", 3, "rgb(102, 194, 255)", " ");
+    let thing = new Status(level, "Defense Buff", 3, "rgb(102, 194, 255)", "(you) has Defense Buff.");
     thing.effect = function(){
-      let buff = (2 * this.level);
+      let buff = (1 * this.level);
       this.user.currentDefense += buff;
       this.user.currentMagicD += buff;
     }
     this.endEffect = function(){
-      let buff = (2 * this.level);
+      let buff = (1 * this.level) * this.count;
       this.user.currentDefense -= buff;
       this.user.currentMagicD -= buff;
     }
     return thing;
   }
   function AttackCurse(level){
-    let thing = new Status(level, "Attack Curse", 3, "rgb(153, 102, 102)", " ");
+    let thing = new Status(level, "Attack Curse", 3, "rgb(153, 102, 102)", "(you) suffers from Attack Curse.");
     thing.effect = function(){
-      let curse = (2 * this.level);
+      let curse = (1 * this.level);
       this.user.currentAttack -= curse;
       this.user.currentMagicA -= curse;
     }
     this.endEffect = function(){
-      let curse = (2 * this.level);
+      let curse = (1 * this.level) * this.count;
       this.user.currentAttack += curse;
       this.user.currentMagicA += curse;
     }
     return thing;
   }
   function DefenseCurse(level){
-    let thing = new Status(level, "Defense Curse", 3, "rgb(153, 153, 102)", " ");
+    let thing = new Status(level, "Defense Curse", 3, "rgb(153, 153, 102)", "(you) suffers from Defense Curse.");
     thing.effect = function(){
-      let curse = (2 * this.level);
+      let curse = (1 * this.level);
       this.user.currentDefense -= curse;
       this.user.currentMagicD -= curse;
     }
     this.endEffect = function(){
-      let curse = (2 * this.level);
+      let curse = (1 * this.level) * this.count;
       this.user.currentDefense += curse;
       this.user.currentMagicD += curse;
     }
@@ -1039,7 +1037,7 @@ function startFloor(floor){
   function loop(){
     if(counter == 800){
       let path = Math.floor(Math.random() * 1000);
-      // let path = 125;
+      // path = 475;
 
       if(path >= 0 && path < 50){
         counter = 0;
@@ -1287,23 +1285,75 @@ function startFloor(floor){
           }
         }
       }
-      // //TODO: implement choices.
-      // else if(path >= 400 && path < 500){
-      //   gen_step = 0;
-      //   let tem_counter = 0;
-      //   choices();
-      //
-      //   function choices(){
-      //     if(temp_counter == 0){
-      //       addText("&nbsp");
-      //
-      //     } else if(){
-      //
-      //     }
-      //
-      //   }
-      // }
-      else if(path >= 450 && path < 1000){
+      else if(path >= 450 && path < 500){
+        gen_step = 0;
+        isActive = false;
+        let temp_counter = 0;
+        let temp_finding;
+        let temp_used = false;
+        let temp_cost = randomNum(200, 25);
+        demChoices();
+
+        function demChoices(){
+          if(temp_counter == 0){
+            temp_finding = Math.floor(Math.random() * 2);
+            addText("&nbsp");
+            if(temp_finding == 0){
+              addText("You come across a whirling, mechanical box.");
+            } else if(temp_finding == 1){
+              addText("You come across a glowing pool of water.");
+            }
+
+          } else if(temp_counter == 700){
+            if(temp_finding == 0){
+              addText("&nbsp");
+              addText("The machine gives out steam and opens up.");
+            } else if(temp_finding == 1){
+              addText("&nbsp");
+              addText("The glowing body of water pulsates.");
+            }
+          } else if(temp_counter == 1400){
+            clearText();
+            addText("(2) Walk away.", true);
+            addText("<span style='color: purple;'>(1) Heal: </span>" + temp_cost + " gold.", true);
+            addText("Remaining Gold: " + player.gold, true);
+
+            options = 2;
+            isActive = true;
+            gen_step = 0;
+          }
+          if(paused) setTimeout(demChoices, 0);
+          else if(gen_step == 0){
+            temp_counter++;
+            setTimeout(demChoices, 0);
+          } else if(gen_step == 1){
+            isActive = false;
+
+            if(player.gold > temp_cost){
+              player.gold -= temp_cost;
+              player.currentHealth += 35;
+              if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
+              player.currentStamina += 35;
+              if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+              player.currentMana += 35;
+              if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
+              temp_used = true;
+              checkStats();
+            }
+            temp_counter = 1900;
+            gen_step = 0;
+            setTimeout(demChoices, 0);
+          } else if(gen_step == 2){
+            clearText();
+            if(temp_used){
+              if(temp_finding) addText("You walk away feeling refreshed.");
+              else addText("You walk away feeling stronger.");
+            } else addText("You walk away.");
+            counter = 0;
+          }
+        }
+      }
+      else if(path >= 500 && path < 1000){
         myriad();
         function myriad(){
           addText("&nbsp");
@@ -1316,6 +1366,7 @@ function startFloor(floor){
             texts.push("Candles dimly illuminate your way.");
             texts.push("You hear droplets echo in the distance.");
             texts.push("You make your way to the next room.");
+            texts.push("The cold sends shivers down your spine.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
@@ -1333,6 +1384,7 @@ function startFloor(floor){
             addText(texts[randomo]);
           } else if(random >= 8 && random < 10){
             let texts = [];
+            texts.push("You feel the tower slightly rumble.");
             texts.push("Something smells rotten.");
             texts.push("There are broken pieces of glass and wood on the floor.");
             texts.push("You come across a stretched out hallway.");
@@ -1340,6 +1392,7 @@ function startFloor(floor){
             texts.push("Moonlight pierces through the cracks of the barred window.")
 
             let randomo = Math.floor(Math.random() * texts.length);
+            addText(texts[randomo]);
           }
 
           counter = 0;
@@ -1611,13 +1664,12 @@ function endBattle(result){
 
   addText(result_text);
 
-  isActive = false;
-
   setTimeout(con, 1500);
 
   function con(){
     addText("<p style='color: purple'>(1) Continue</p>");
     isActive = true;
+    gen_step = 0;
   }
 
   options = 1;
@@ -1725,11 +1777,16 @@ function endBattle(result){
               player.totalMagicA += 2;
               player.currentMagicA += 2;
             } else if(gen_step == 4){
-              player.totalDef += 1;
+              player.totalDefense += 1;
               player.currentDefense += 1;
               player.totalMagicD += 1;
               player.currentMagicD += 1;
             }
+
+            player.currentAttack = player.totalAttack;
+            player.currentMagicA = player.totalMagicA;
+            player.currentDefense = player.totalMagicD;
+            player.currentMagicD = player.totalMagicD;
 
             checkStats();
             gen_step = 0;
@@ -1787,6 +1844,7 @@ function statusEffect(user, index){
 function pushStatus(name, level, user){
   for(let i = user.status.length - 1; i >= 0; i--){
     if(user.status[i].name == name){
+      user.status[i].endEffect();
       user.status.splice(i, 1);
     }
   }
@@ -2094,6 +2152,7 @@ function checkStats(){
     document.getElementById("enemy-health" + i).style.marginRight = proportions(enemies[i].totalHealth, enemies[i].currentHealth, 5) + "%";
     document.getElementById("enemy-health" + i).style.backgroundColor = "rgb(" + colorProportions(enemies[i].totalHealth, enemies[i].currentHealth, 255) + ",150,0)";
   }
+  document.getElementById("player-level").innerHTML = "lvl " + player.level;
 
   document.getElementById("player-health").style.marginLeft = proportions(player.totalHealth, player.currentHealth, 35) + "%";
   document.getElementById("player-health").style.marginRight = proportions(player.totalHealth, player.currentHealth, 35) + "%";
