@@ -648,12 +648,14 @@ function initCards(){
   }
 
   function Fireball(){
-    let thing = new Card(1, "Fireball", "fire", "Mage", true, 0, 6, 0, 0, 60, 0, "A ball of fire with AoE. Inflicts minor Burn.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
+    let thing = new Card(1, "Fireball", "fire", "Mage", true, 0, 3, 0, 0, 60, 0, "A ball of fire with AoE. Inflicts minor Burn.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
     thing.effect = function() {
       pushStatus("Burn", 1, this.target);
       if(this.user == player){
         for(let i = 0; i < enemies.length; i++){
-          enemies[i].currentHealth -= 7;
+          let damage = user.currentMagicA + Math.floor(user.currentMagicA/2);
+          if(damage < 0) damage = 0;
+          enemies[i].currentHealth -= damage;
         }
       }
     };
@@ -665,7 +667,7 @@ function initCards(){
       pushStatus("Defense Buff", 1, this.user);
       this.user.currentHealth -= 15;
 
-      this.user.currentMana += 35;
+      this.user.currentMana += 45;
       if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
       this.user.currentStamina += 35;
       if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
@@ -2026,7 +2028,7 @@ function Character(job){
     this.totalMagicA = 5;
     this.totalDefense = 1;
     this.totalMagicD = 3;
-    this.totalMana = 125;
+    this.totalMana = 120;
     this.totalStamina = 65;
     this.slots = 3;
   }
