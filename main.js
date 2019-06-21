@@ -991,6 +991,7 @@ function FloorOne(){
                 document.getElementById("deck-list").style.display = "inline-block";
                 document.getElementById("inventory-list").style.display = "inline-block";
                 addText("You pick up some items lying on the floor.");
+                checkStats();
               }
               if(counter == 1900) addText("You look ahead and see two doors.");
               if(counter == 2800){
