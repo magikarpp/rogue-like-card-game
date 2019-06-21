@@ -36,7 +36,7 @@ let allItemsCategory = {};
 let allStatus = {};
 let allStatusCategory = {};
 
-let isTesting = false;
+let isTesting = true;
 
 initialize();
 
@@ -120,7 +120,7 @@ function testingFunction(){
   p_name = "Tester";
 
   document.getElementById("info-name").innerHTML = p_name;
-  player = new Character("warrior");
+  player = new Character("rogue");
 
   isStart = true;
 
@@ -349,7 +349,6 @@ function initEnemies(){
   function GoblinShaman(){
     let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Shaman", "Goblin", "normal", randomNum(22, 2), 1, 1, 0, 3, [], ["A Goblin Shaman teleports in front you.", "A Goblin Shaman appears before you."], [], ["Goblin Shaman vanishes."]);
     pushCard("Attack", dude);
-    pushCard("Sm. Bandaid", dude);
     pushCard("Minor Def. Buff", dude);
     pushCard("Minor Atk. Buff", dude);
     pushCard("Small Energy Ball", dude);
@@ -396,7 +395,6 @@ function initEnemies(){
   function Necromancer(){
     let dude = new Enemy(1, 28, randomNum(175, 5), 10, "Necromancer", "Zombie", "normal", randomNum(22, 2), 1, randomNum(3, 1), 0, 3, [], ["A Necromancer flaunts its staff at you.", "You hear a Necromancer's chant nearby.", "Necromancer summons zombies."], [], ["Necromancer collapses."]);
     pushCard("Small Energy Ball", dude);
-    pushCard("Sm. Bandaid", dude);
     pushCard("Minor Def. Curse", dude);
     pushCard("Minor Atk. Curse", dude);
 
@@ -634,7 +632,7 @@ function initCards(){
     return thing;
   }
   function Theft(){
-    let thing = new Card(1, "Theft", "normal", "Rogue", true, 5, 0, 0, 0, 0, 20, "Hit with a chance to steal item.", ["(you) attempts to pocket (enemy).", "(you) attempts to go through (enemy)'s pockets."]);
+    let thing = new Card(1, "Theft", "normal", "Rogue", true, 5, 0, 0, 0, 10, 20, "Hit with a chance to steal item.", ["(you) attempts to pocket (enemy).", "(you) attempts to go through (enemy)'s pockets."]);
     thing.effect = function(){
       let dude = allItemsCategory["Drop"](this.target.level);
       if(!dude) dude = allItemsCategory["Drop"](this.target.level);
@@ -795,6 +793,8 @@ function initStatus(){
       let damage = (5 * this.level) - this.user.currentDefense;
       if(damage < 0) damage = 0;
       this.user.currentHealth -= damage;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     return thing;
   }
@@ -804,6 +804,8 @@ function initStatus(){
       let damage = (5 * this.level) - this.user.currentMagicD;
       if(damage < 0) damage = 0;
       this.user.currentHealth -= damage;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     return thing;
   }
@@ -813,6 +815,8 @@ function initStatus(){
       let damage = (2 * this.level);
       if(damage < 0) damage = 0;
       this.user.currentHealth -= damage;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     return thing;
   }
@@ -822,6 +826,8 @@ function initStatus(){
       let buff = (1 * this.level);
       this.user.currentAttack += buff;
       this.user.currentMagicA += buff;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     this.endEffect = function(){
       let buff = (1 * this.level) * this.totalCount;
@@ -836,6 +842,8 @@ function initStatus(){
       let buff = (1 * this.level);
       this.user.currentDefense += buff;
       this.user.currentMagicD += buff;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     this.endEffect = function(){
       let buff = (1 * this.level) * this.totalCount;
@@ -850,6 +858,8 @@ function initStatus(){
       let curse = (1 * this.level);
       this.user.currentAttack -= curse;
       this.user.currentMagicA -= curse;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     this.endEffect = function(){
       let curse = (1 * this.level) * this.totalCount;
@@ -864,6 +874,8 @@ function initStatus(){
       let curse = (1 * this.level);
       this.user.currentDefense -= curse;
       this.user.currentMagicD -= curse;
+      this.count -= 1;
+      if(this.count <= 0) this.endEffect();
     }
     this.endEffect = function(){
       let curse = (1 * this.level) * this.totalCount;
@@ -1291,7 +1303,7 @@ function startFloor(floor){
         let temp_counter = 0;
         let temp_finding;
         let temp_used = false;
-        let temp_cost = randomNum(200, 25);
+        let temp_cost = randomNum(200, 50);
         demChoices();
 
         function demChoices(){
@@ -1314,14 +1326,15 @@ function startFloor(floor){
             }
           } else if(temp_counter == 1400){
             clearText();
-            addText("(2) Walk away.", true);
-            addText("<span style='color: purple;'>(1) Heal: </span>" + temp_cost + " gold.", true);
+            addText("<span style='color: purple;'>(2)</span> Walk away.", true);
+            addText("<span style='color: purple;'>(1)</span> Heal: " + temp_cost + " gold.", true);
             addText("Remaining Gold: " + player.gold, true);
 
             options = 2;
             isActive = true;
             gen_step = 0;
           }
+
           if(paused) setTimeout(demChoices, 0);
           else if(gen_step == 0){
             temp_counter++;
@@ -1340,9 +1353,9 @@ function startFloor(floor){
               temp_used = true;
               checkStats();
             }
-            temp_counter = 1900;
+            temp_counter = 1400;
             gen_step = 0;
-            setTimeout(demChoices, 0);
+            demChoices();
           } else if(gen_step == 2){
             clearText();
             if(temp_used){
@@ -1366,7 +1379,7 @@ function startFloor(floor){
             texts.push("Candles dimly illuminate your way.");
             texts.push("You hear droplets echo in the distance.");
             texts.push("You make your way to the next room.");
-            texts.push("The cold sends shivers down your spine.");
+            texts.push("You continue forward.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
@@ -1375,21 +1388,25 @@ function startFloor(floor){
             texts.push("There is a barred window that you can barely make out whats outside.");
             texts.push("The small candles flicker, making the shadows dance.");
             texts.push("The damp air wraps around your body.");
+            texts.push("The cold sends shivers down your spine.");
             texts.push("You see movement in the shadows.");
             texts.push("Water splashes as you step in a puddle.");
-            texts.push("You push through an old, rotting door.");
             texts.push("Rats scurry away as you enter the next room.");
+            texts.push("You look around for supplies.");
+            texts.push("You clear out some debris blocking your way.");
+            texts.push("There are broken pieces of glass and wood on the floor.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
           } else if(random >= 8 && random < 10){
             let texts = [];
             texts.push("You feel the tower slightly rumble.");
+            texts.push("An eerie quietness engulfs the room.");
             texts.push("Something smells rotten.");
-            texts.push("There are broken pieces of glass and wood on the floor.");
+            texts.push("You push through an old, rotting door.");
             texts.push("You come across a stretched out hallway.");
             texts.push("The cold, stone walls do not feel inviting.");
-            texts.push("Moonlight pierces through the cracks of the barred window.")
+            texts.push("Moonlight pierces through the cracks of the barred window.");
 
             let randomo = Math.floor(Math.random() * texts.length);
             addText(texts[randomo]);
@@ -1830,12 +1847,10 @@ function statusEffect(user, index){
     newNode.innerHTML = "&nbsp";
     document.getElementById(id_name).appendChild(newNode);
 
-    user.status[i].effect();
     let temp_text = user.status[i].speech.replace(/\(you\)/g, user.name);
     addText(temp_text);
-    user.status[i].count -= 1;
-    if(user.status[i].count == 0){
-      user.status[i].endEffect();
+    user.status[i].effect();
+    if(user.status[i].count <= 0){
       user.status.splice(i, 1);
     }
   }
