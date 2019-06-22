@@ -2,6 +2,7 @@ let isStart = false;
 let isBattle = false;
 let isActive = false;
 let isTutorial = false;
+let isTutorialBattle = false;
 let isInventory = false;
 let battleStep = 0;
 let paused = false;
@@ -139,7 +140,7 @@ function testingFunction(){
 
   checkStats();
 
-  startFloor(current_floor);
+  tutorialBattleInitiate();
 }
 
 function buttonPress(event){
@@ -315,6 +316,8 @@ function initEnemies(){
   allEnemiesCategory["Race"] = Race;
   allEnemiesCategory["Count"] = Count;
 
+  allEnemies["Flame Dragon"] = FlameDragon;
+
   allEnemies["Goblin Soldier"] = GoblinSoldier;
   allEnemies["Small Goblin"] = SmallGoblin;
   allEnemies["Large Goblin"] = LargeGoblin;
@@ -327,6 +330,18 @@ function initEnemies(){
   allEnemies["Abomination"] = Abomination;
   allEnemies["Necromancer"] = Necromancer;
   allEnemies["Zombie Dragon"] = ZombieDragon;
+
+  function FlameDragon(){
+    let dude = new Enemy(5, 175, randomNum(500, 50), 100, "Flame Dragon", "Dragon", "fire", 200, 10, 10, 5, 5, [], ["A Flame Dragon ferociously roars.", "You take your stance as a Flame Dragon lands from flight."], [], ["Flame Dragon collapses to the ground."]);
+    pushCard("Roar", dude);
+    pushCard("Flame Breath", dude);
+    pushCard("Bite", dude);
+    pushCard("Bite", dude);
+    pushCard("Bite", dude);
+    pushCard("Bite", dude);
+    pushCard("Attack", dude);
+    return dude;
+  }
 
   function GoblinSoldier(){
     let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Goblin Soldier", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 2, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
@@ -464,17 +479,18 @@ function initCards(){
   allCards["Rest1"] = Rest;
   allCards["Rest2"] = Rest;
   allCards["Rest3"] = Rest;
+  //Lvl 2
   allCards["Sm. Bandaid"] = SmallBandaid;
   allCards["Minor Atk. Buff"] = MinorAttackBuff;
   allCards["Minor Def. Buff"] = MinorDefenseBuff;
   allCards["Minor Atk. Curse"] = MinorAttackCurse;
   allCards["Minor Def. Curse"] = MinorDefenseCurse;
   allCards["Small Energy Ball"] = SmallEnergyBall;
-  //Lvl:2
-  allCards["Poison Breath"] = PoisonBreath;
 
   allCards["Bite"] = Bite;
   allCards["Roar"] = Roar;
+  allCards["Flame Breath"] = FlameBreath;
+  allCards["Poison Breath"] = PoisonBreath;
 
   allCards["Heavy Attack"] = HeavyAttack;
   allCards["Blood Strike"] = BloodStrike;
@@ -515,50 +531,43 @@ function initCards(){
     return thing;
   }
   function SmallBandaid(){
-    let thing = new Card(1, "Sm. Bandaid", "normal", "Any", false, 0, 0, 0, 0, 10, 10, "Recover minor health.", ["(you) puts on a bandaid."]);
+    let thing = new Card(2, "Sm. Bandaid", "normal", "Any", false, 0, 0, 0, 0, 0, 10, "Recover minor health.", ["(you) puts on a bandaid."]);
     thing.effect = function(){
-      this.user.currentHealth += 20;
+      this.user.currentHealth += 25;
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
     };
     return thing;
   }
   function MinorAttackBuff(){
-    let thing = new Card(1, "Minor Atk. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you)'s attacks feels a slight surge of aggression.", "(you)'s attacks feels slightly stronger."]);
+    let thing = new Card(2, "Minor Atk. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you)'s attacks feels a slight surge of aggression.", "(you)'s attacks feels slightly stronger."]);
     thing.effect = function(){
-      pushStatus("Attack Buff", 1, this.user);
+      pushStatus("Attack Buff", Math.floor(this.user.level/2.5), this.user);
     };
     return thing;
   }
   function MinorDefenseBuff(){
-    let thing = new Card(1, "Minor Def. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you)'s defense feels slightly sturdier.", "(you)'s defense feels slightly stronger."]);
+    let thing = new Card(2, "Minor Def. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you)'s defense feels slightly sturdier.", "(you)'s defense feels slightly stronger."]);
     thing.effect = function(){
-      pushStatus("Defense Buff", 1, this.user);
+      pushStatus("Defense Buff", Math.floor(this.user.level/2.75), this.user);
     };
     return thing;
   }
   function MinorAttackCurse(){
-    let thing = new Card(1, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy)'s attacks feels weaker from curse."]);
+    let thing = new Card(2, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy)'s attacks feels weaker from curse."]);
     thing.effect = function(){
-      pushStatus("Attack Curse", 1, this.target);
+      pushStatus("Attack Curse", Math.floor(this.user.level/2.5), this.target);
     };
     return thing;
   }
   function MinorDefenseCurse(){
-    let thing = new Card(1, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy)'s defense.", "(enemy) defense feels weaker from curse."]);
+    let thing = new Card(2, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy)'s defense.", "(enemy) defense feels weaker from curse."]);
     thing.effect = function(){
-      pushStatus("Defense Curse", 1, this.target);
+      pushStatus("Defense Curse", Math.floor(this.user.level/2.75), this.target);
     };
     return thing;
   }
   function SmallEnergyBall(){
-    let thing = new Card(1, "Small Energy Ball", "normal", "Any", true, 0, 8, 0, 0, 0, 35, "A ball of energy.", ["(you) shoot out a ball of energy."]);
-    return thing;
-  }
-  function PoisonBreath(){
-    let thing = new Card(2, "Poison Breath", "poison", "Any", true, 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) breathes poison onto (enemy).", "(you) covers (enemy) in poison."]);
-    thing.effect = function(){
-      pushStatus("Poison", 1, this.target);
-    };
+    let thing = new Card(2, "Small Energy Ball", "normal", "Any", true, 0, 8, 0, 0, 0, 35, "A ball of energy.", ["(you) shoot out a ball of energy."]);
     return thing;
   }
 
@@ -582,8 +591,22 @@ function initCards(){
     let thing = new Card(2, "Roar", "normal", "Enemy", true, 0, 0, 0, 0, 5, 20, "Invigorate your allies.", ["(you) lets out a piercing roar. (you)'s allies have attack buffs."]);
     thing.effect = function(){
       for(let i = 0; i < enemies.length; i++){
-        pushStatus("Attack Buff", 1, enemies[i]);
+        pushStatus("Attack Buff", Math.floor(this.user.level/2.85), enemies[i]);
       }
+    };
+    return thing;
+  }
+  function PoisonBreath(){
+    let thing = new Card(1, "Poison Breath", "poison", "Enemy", true, 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) breathes poison onto (enemy).", "(you) covers (enemy) in poison."]);
+    thing.effect = function(){
+      pushStatus("Poison", Math.floor(this.user.level/2.5), this.target);
+    };
+    return thing;
+  }
+  function FlameBreath(){
+    let thing = new Card(1, "Flame Breath", "fire", "Enemy", true, 0, 15, 0, 0, 40, 0, "Deal damage and inflict Burn.", ["(you) breathes fire onto (enemy).", "(you) covers (enemy) with a breath of fire."]);
+    thing.effect = function(){
+      pushStatus("Poison", Math.floor(this.user.level/2.5), this.target);
     };
     return thing;
   }
@@ -593,11 +616,11 @@ function initCards(){
     return thing;
   }
   function BloodStrike(){
-    let thing = new Card(1, "Blood Strike", "normal", "Warrior", true, 5, 0, 0, 0, 0, 30, "Hit an enemy with lifesteal.", ["(you) feasts on (enemy)'s blood."]);
+    let thing = new Card(1, "Blood Strike", "normal", "Warrior", true, 5, 0, 0, 0, 10, 35, "Hit an enemy with lifesteal.", ["(you) feasts on (enemy)'s blood."]);
     thing.effect = function(){
       this.attack += Math.floor(this.user.currentAttack/2);
-      if(this.target.race == "Undead"){
-        addText(this.user.name + " loses health stealing Undead blood.");
+      if(this.target.race.includes("Undead")){
+        addText(this.user.name + " loses health attempting to steal Undead blood.");
         this.user.currentHealth -= Math.floor(this.user.currentAttack/2);
       } else{
         this.user.currentHealth += Math.floor(this.user.currentAttack + this.user.currentAttack/2);
@@ -704,6 +727,11 @@ function initItems(){
   allItems["Small Stamina Potion"] = SmallStaminaPotion;
   allItems["Small Elixir"] = SmallElixir;
 
+  allItems["Large Health Potion"] = LargeHealthPotion;
+  allItems["Large Stamina Potion"] = LargeStaminaPotion;
+  allItems["Large Mana Potion"] = LargeManaPotion;
+  allItems["Large Elixir"] = LargeElixir;
+
   allItemsCategory["Drop"] = dropItemByLevel;
   allItemsCategory["Level"] = randomItemByLevel;
 
@@ -744,6 +772,43 @@ function initItems(){
     return thing;
   }
 
+  function LargeHealthPotion(){
+    let thing = new Item(10, 35, "Large Health Potion", 270, "Restores abundant health.");
+    thing.effect = function(){
+      player.currentHealth += 100;
+      if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
+    }
+    return thing;
+  }
+  function LargeManaPotion(){
+    let thing = new Item(10, 45, "Large Mana Potion", 300, "Restores abundant mana.");
+    thing.effect = function(){
+      player.currentMana += 175;
+      if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
+    }
+    return thing;
+  }
+  function LargeStaminaPotion(){
+    let thing = new Item(10, 35, "Large Stamina Potion", 270, "Restores abundant stamina.");
+    thing.effect = function(){
+      player.currentStamina += 150;
+      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+    }
+    return thing;
+  }
+  function LargeElixir(){
+    let thing = new Item(10, 15, "Large Elixir", 450, "Abundant restore to all stats.");
+    thing.effect = function(){
+      player.currentHealth += 100;
+      if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
+      player.currentStamina += 175;
+      if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+      player.currentMana += 150;
+      if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
+    }
+    return thing;
+  }
+
   function randomItemByLevel(level){
     let array = [];
     for(let key in allItems){
@@ -759,7 +824,7 @@ function initItems(){
       dude = array[Math.floor(Math.random() * array.length)];
       let temp_chance = dude.chance * (1 + (level - dude.level));
       if(temp_chance > 95) temp_chance = 95;
-      if(temp_chance < Math.floor(Math.random() * 100)) found = true;
+      if(temp_chance > Math.floor(Math.random() * 100)) found = true;
     }
 
     return dude;
@@ -825,14 +890,14 @@ function initStatus(){
   function AttackBuff(level){
     let thing = new Status(level, "Attack Buff", 3, "rgb(102, 194, 255)", "(you) has Attack Buff.");
     thing.effect = function(){
-      let buff = (1 * this.level);
+      let buff = (1 + this.level);
       this.user.currentAttack += buff;
       this.user.currentMagicA += buff;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
     };
     thing.endEffect = function(){
-      let buff = (1 * this.level) * this.totalCount;
+      let buff = (1 + this.level) * this.totalCount;
       this.user.currentAttack -= buff;
       this.user.currentMagicA -= buff;
     };
@@ -841,14 +906,14 @@ function initStatus(){
   function DefenseBuff(level){
     let thing = new Status(level, "Defense Buff", 3, "rgb(102, 194, 255)", "(you) has Defense Buff.");
     thing.effect = function(){
-      let buff = (1 * this.level);
+      let buff = (1 + this.level);
       this.user.currentDefense += buff;
       this.user.currentMagicD += buff;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
     };
     thing.endEffect = function(){
-      let buff = (1 * this.level) * this.totalCount;
+      let buff = (1 + this.level) * this.totalCount;
       this.user.currentDefense -= buff;
       this.user.currentMagicD -= buff;
     };
@@ -857,14 +922,14 @@ function initStatus(){
   function AttackCurse(level){
     let thing = new Status(level, "Attack Curse", 3, "rgb(153, 102, 102)", "(you) suffers from Attack Curse.");
     thing.effect = function(){
-      let curse = (1 * this.level);
+      let curse = (1 + this.level);
       this.user.currentAttack -= curse;
       this.user.currentMagicA -= curse;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
     };
     thing.endEffect = function(){
-      let curse = (1 * this.level) * this.totalCount;
+      let curse = (1 + this.level) * this.totalCount;
       this.user.currentAttack += curse;
       this.user.currentMagicA += curse;
     };
@@ -873,14 +938,14 @@ function initStatus(){
   function DefenseCurse(level){
     let thing = new Status(level, "Defense Curse", 3, "rgb(153, 153, 102)", "(you) suffers from Defense Curse.");
     thing.effect = function(){
-      let curse = (1 * this.level);
+      let curse = (1 + this.level);
       this.user.currentDefense -= curse;
       this.user.currentMagicD -= curse;
       this.count -= 1;
       if(this.count <= 0) this.endEffect();
     };
     thing.endEffect = function(){
-      let curse = (1 * this.level) * this.totalCount;
+      let curse = (1 + this.level) * this.totalCount;
       this.user.currentDefense += curse;
       this.user.currentMagicD += curse;
     };
@@ -1432,34 +1497,6 @@ function startFloor(floor){
   }
 }
 
-function tutorial(){
-  counter = 0;
-  isTutorial = true;
-  loop();
-
-  function loop(){
-    if(counter == 400) addText("You push open the door labeled \"Tutorial\".");
-    if(counter == 1200) addText("But then realize that the dev hasn't added a real tutorial yet.");
-    if(counter == 2100) addText("(sorry).");
-    if(counter == 2600) addText("Some tips though:");
-    if(counter == 3200) addText("1) Green bar is Health, yellow bar is Stamina, blue bar is Mana, and Pink bar is experience points.");
-    if(counter == 4400) addText("2) You can press \"i\" and \"d\" at anytime to open/close inventory and deck list.");
-    if(counter == 5400) addText("3) (Add more to this list?).");
-    if(counter == 6000) addText("(sorry again).");
-    if(counter == 6600) addText("You wonder what that was about and continue onwards.");
-    if(counter == 7500){
-      startFloor(current_floor);
-    } else{
-      if(paused){
-        setTimeout(loop, 0);
-      } else{
-        counter++;
-        setTimeout(loop, 0);
-      }
-    }
-  }
-}
-
 function setName(){
   gen_step = 0;
   loop();
@@ -1492,6 +1529,830 @@ function setName(){
 
 function start(){
   FloorOne();
+}
+
+
+function tutorial(){
+  counter = 0;
+  isTutorial = true;
+  gen_step = 0;
+  isActive = false;
+
+  let temporary_player = player;
+  let temporary_deck = deck;
+  let temporary_inventory = inventory;
+
+  loop();
+
+  function loop(){
+    if(gen_step == 0 && counter == 200) addText("You push open the door labeled \"Tutorial\".");
+    if(gen_step == 0 && counter == 1000){
+      addText("This is the Info Screen.");
+      document.getElementById("text").style.border = "5px solid red";
+    }
+    if(gen_step == 0 && counter == 2000){
+      addText("Here you'll find all info on what is happening in the game.");
+    }
+    if(gen_step == 0 && counter == 3000){
+      addText("You will also be able to navigate through the game using the options given on this screen.");
+    }
+    if(gen_step == 0 && counter == 4000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          document.getElementById("text").style.border = "";
+          counter = 5000;
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 5000) addText("&nbsp");
+    if(gen_step == 0 && counter == 5200){
+      document.getElementById("deck-list").style.border = "3px solid red";
+      document.getElementById("inventory-list").style.border = "3px solid red";
+      addText("At any point, you can click the deck and inventory list at the bottom of the screen to open up the respective screens.");
+    }
+    if(gen_step == 0 && counter == 6700){
+      addText("Or you can press \'i\' and \'d\' at anytime to open/close inventory and deck list.");
+    }
+    if(gen_step == 0 && counter == 7700){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          counter = 8700;
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 9000){
+      addText("&nbsp");
+      addText("At any point in the game, you can open up the inventory list to use any available items.");
+    }
+    if(gen_step == 0 && counter == 10000) addText("In the deck list, you can view all cards available in your deck.");
+    if(gen_step == 0 && counter == 11000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          document.getElementById("deck-list").style.border = "";
+          document.getElementById("inventory-list").style.border = "";
+          addText("&nbsp");
+          counter = 12000;
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 12400){
+      document.getElementById("player-bottom-info").style.border = "5px solid red";
+      addText("Down below you can view the status of your player.");
+    }
+    if(gen_step == 0 && counter == 13400){
+      document.getElementById("player-bottom-info").style.border = "";
+      document.getElementById("player-health-2").style.border = "4px solid red";
+      addText("This is your health.");
+    }
+    if(gen_step == 0 && counter == 14400) addText("When your health is reduced to 0, the game is over.");
+    if(gen_step == 0 && counter == 15400) addText("Use potions, cards, level ups, and various checkpoints to replenish health.");
+    if(gen_step == 0 && counter == 16000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          document.getElementById("player-health-2").style.border = "";
+          counter = 16800;
+          addText("&nbsp");
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 17000){
+      document.getElementById("player-stamina-2").style.border = "4px solid red";
+      document.getElementById("player-mana-2").style.border = "4px solid red";
+      addText("This is your stamina (yellow) and mana (blue).");
+    }
+    if(gen_step == 0 && counter == 18000) addText("Many cards require stamaina and/or mana to activate.");
+    if(gen_step == 0 && counter == 19000) addText("Each card's requirements aren't directly given, but you will learn them as you progress in the game.");
+    if(gen_step == 0 && counter == 20000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          document.getElementById("player-stamina-2").style.border = "";
+          document.getElementById("player-mana-2").style.border = "";
+          counter = 20800;
+          gen_step = 0;
+          addText("&nbsp");
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 21000){
+      document.getElementById("player-exp").style.border = "4px solid red";
+      addText("This is your experience bar (pink).");
+    }
+    if(gen_step == 0 && counter == 22000) addText("As you win battles, your experience bar will fill up.");
+    if(gen_step == 0 && counter == 23000) addText("Once full, you will level up and obtain choices to upgrade particular stats.");
+    if(gen_step == 0 && counter == 24000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          document.getElementById("player-exp").style.border = "";
+          counter = 24800;
+          addText("&nbsp");
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 25000) addText("We will now learn how to engage in battle.");
+    if(gen_step == 0 && counter == 26000) addText("This is a mock battle and you will return to your starting player/deck/inventory afterwards.");
+    if(gen_step == 0 && counter == 28000){
+      isTutorialBattle = true;
+      gen_step = 0;
+      isActive = false;
+      options = 0;
+      tutorialBattleInitiate();
+
+      tutBattleLoop();
+
+      function tutBattleLoop(){
+        if(isTutorialBattle){
+          setTimeout(tutBattleLoop, 0);
+        }
+        else{
+          gen_step = 0;
+          counter = 28001;
+          loop();
+        }
+      }
+
+      return;
+    }
+    if(gen_step == 0 && counter == 28100) addText("You can obtain more cards for your deck by meeting the shopkeeper during the game.");
+    if(gen_step == 0 && counter == 29500) addText("The shopkeeper will sell you items as well as packs, which gives you more cards.");
+    if(gen_step == 0 && counter == 30500){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          counter = 30501;
+          addText("&nbsp");
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 31000) addText("You have completed the tutorial.");
+    if(gen_step == 0 && counter == 32000) addText("It's time for you to see how far you can climb the tower!");
+    if(gen_step == 0 && counter == 33000){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      tutLoop();
+
+      function tutLoop(){
+        if(gen_step == -1){
+          setTimeout(tutLoop, 0);
+        } else{
+          counter = 33001;
+          clearText();
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          loop();
+        }
+      }
+      return;
+    }
+    if(gen_step == 0 && counter == 33001){
+      isTutorial = false;
+      isActive = false;
+      options = 0;
+      counter = 0;
+
+      player = temporary_player;
+      deck = temporary_deck;
+      inventory = temporary_inventory;
+      checkStats();
+
+      startFloor(current_floor);
+    } else{
+      if(paused){
+        setTimeout(loop, 0);
+      } else{
+        counter++;
+        setTimeout(loop, 0);
+      }
+    }
+  }
+}
+
+function tutorialBattleInitiate(){
+  isTutorialBattle = true;
+  gen_step = 0;
+  isActive = false;
+  options = 0;
+
+  enemies = [];
+  dead_enemies = [];
+
+  player.totalHealth = 300;
+  player.currentHealth = 300;
+  player.totalStamina = 200;
+  player.currentStamina = 200;
+  player.totalMana = 200;
+  player.currentMana = 200;
+
+  player.totalAttack = 15;
+  player.currentAttack = 15;
+  player.totalMagicA = 15;
+  player.currentMagicA = 15;
+  player.totalDefense = 2;
+  player.currentDefense = 2;
+  player.totalMagicD = 2;
+  player.currentMagicD = 2;
+
+  player.slots = 4;
+
+  deck = [];
+  for(let i = 0; i < 5; i++){
+    pushCard("Heavy Attack", player);
+    pushCard("Blood Strike", player);
+    pushCard("Flame Sword", player);
+    pushCard("Cycle", player);
+    pushCard("Double Strike", player);
+    pushCard("Theft", player);
+    pushCard("Minor Focus", player);
+    pushCard("Lightning Strike", player);
+  }
+  for(let i = 0; i < 3; i++){
+    pushCard("Minor Atk. Buff", player);
+    pushCard("Minor Def. Buff", player);
+    pushCard("Minor Atk. Curse", player);
+    pushCard("Minor Def. Curse", player);
+    pushCard("Attack", player);
+  }
+  for(let i = 0; i < 5; i++){
+    pushCard("Do Nothing", player);
+    pushCard("Rest", player);
+  }
+
+  inventory = [];
+  for(let i = 0; i < 10; i++){
+    addItemToInventory(allItems["Large Health Potion"]());
+    addItemToInventory(allItems["Large Stamina Potion"]());
+    addItemToInventory(allItems["Large Mana Potion"]());
+    addItemToInventory(allItems["Large Elixir"]());
+  }
+
+  enemies.push(allEnemies["Flame Dragon"]());
+
+  startTutorialBattle();
+}
+
+function startTutorialBattle(){
+  isTutorialBattle = true;
+  isBattle = false;
+  isActive = false;
+
+  document.getElementById("characters").style.display = "block";
+  document.getElementById("cards").style.display = "block";
+  document.getElementById("info-2").style.display = "none";
+
+  document.getElementById("board").style.backgroundColor = "rgb(255, 250, 250)";
+
+  //Set enemies on board
+  for(let i = 0; i < enemies.length; i++){
+    let node = document.createElement("div");
+    node.id = "enemy" + i;
+    node.classList.add("enemy");
+    document.getElementById("enemies").appendChild(node);
+
+    let tempStatus = document.createElement("p");
+    tempStatus.innerHTML = "<span>&nbsp</span>";
+    tempStatus.id = "enemy-status" + i;
+    document.getElementById("enemy" + i).appendChild(tempStatus);
+
+    let tempName = document.createElement("p");
+    tempName.innerHTML = enemies[i].name;
+    document.getElementById("enemy" + i).appendChild(tempName);
+
+    let tempHealth = document.createElement("p");
+    tempHealth.innerHTML = "&nbsp";
+    tempHealth.id = "enemy-health" + i;
+    tempHealth.style.marginLeft = proportions(enemies[i].totalHealth, enemies[i].currentHealth, 5) + "%";
+    tempHealth.style.marginRight = proportions(enemies[i].totalHealth, enemies[i].currentHealth, 5) + "%";
+    tempHealth.style.backgroundColor = "rgb(" + colorProportions(enemies[i].totalHealth, enemies[i].currentHealth, 255) + ",150,0)";
+    document.getElementById("enemy" + i).appendChild(tempHealth);
+  }
+
+  //Set player on board
+  document.getElementById("player-name").innerHTML = player.name;
+
+  checkStats();
+
+  //Set current deck to tempDeck for battle.
+  for(let i = 0; i < deck.length; i++){
+    tempDeck.push(deck[i]);
+  }
+
+  shuffle(tempDeck);
+  setSlots();
+
+  let temp_counter = 0;
+  isBattle = false;
+
+  tutLoop();
+
+  function tutLoop(){
+    if(temp_counter == 0){
+      clearText();
+    } else if(temp_counter == 400){
+      document.getElementById("board").style.border = "5px solid red";
+      addText("This is the battle screen.");
+    } else if(temp_counter == 1400){
+      document.getElementById("board").style.border = "";
+      document.getElementById("enemies").style.border = "5px solid red";
+      document.getElementById("player").style.border = "5px solid red";
+      addText("You will find the enemies and your own stats here.");
+    } else if(temp_counter == 3000){
+      document.getElementById("enemies").style.border = "";
+      document.getElementById("player").style.border = "";
+      addText("&nbsp");
+      addText("Your available 'moves' (cards) are listed at the bottom.");
+      document.getElementById("cards").style.border = "5px solid red";
+    } else if(temp_counter == 4500){
+      addText("For each card, you may activate them pressing the number listed above the card.");
+    } else if(temp_counter == 6000){
+      addText("Once activated, the card is discarded and a new card from your deck takes its place.");
+    } else if(temp_counter == 7500){
+      addText("Try it out in combat.");
+    } else if(temp_counter == 8500){
+      gen_step = -1;
+      isActive = true;
+      options = 1;
+      addText("<span style='color: purple'>(1)</span> Continue.");
+      looper();
+
+      function looper(){
+        if(gen_step == -1){
+          setTimeout(looper, 0);
+        } else{
+          document.getElementById("cards").style.border = "";
+          gen_step = 0;
+          options = 0;
+          isActive = false;
+          isBattle = true;
+          tutorialBattle();
+        }
+      }
+      return;
+    }
+    temp_counter++;
+    setTimeout(tutLoop, 0);
+  }
+}
+
+function tutorialBattle(){
+  addText("&nbsp");
+
+  addText("<span style='color: purple'>Use any card you want now.</span>");
+
+  for(let i = 0; i < enemies.length; i++){
+    addText(enemies[i].encounterSpeech());
+  }
+
+  for(let i = 0; i < player.slots; i++){
+    document.getElementById("c" + i).addEventListener("click", buttonPress);
+  }
+
+  let temp_temper = 0;
+
+  loop();
+
+  function loop(){
+    if(player.currentHealth <= 0){
+      endTutorialBattle("died");
+    } else if(enemies.length == 0){
+      endTutorialBattle("win");
+    } else{
+      isActive = true;
+
+      if(temp_temper == 0 && player.status.length > 0){
+        temp_temper = 1;
+        isActive = false;
+        isBattle = false;
+        gen_step = 0;
+
+        let temp_count = 0;
+
+        yupperoni();
+
+        function yupperoni(){
+          if(temp_count == 0){
+            if(player.status){
+              document.getElementById("player-status").style.border = "4px solid red";
+              document.getElementById("player-status").style.marginLeft = "35%";
+              document.getElementById("player-status").style.marginRight = "35%";
+
+              addText("&nbsp");
+              addText("<span style='color: purple'>Your status has been altered.</span>");
+            }
+          } else if(temp_count == 800){
+            addText("You can see what status you have based on the text in the info screen.");
+          } else if(temp_count == 1800){
+            addText("You can also see a color indicator above your character.");
+          } else if(temp_count == 2800) gen_step = -1;
+
+          if(gen_step == 0){
+            temp_count++;
+            setTimeout(yupperoni, 0);
+          } else if(gen_step == -1){
+            isActive = true;
+            options = 1;
+            addText("<span style='color: purple'>(1)</span> Continue.");
+            tutLoop();
+
+            function tutLoop(){
+              if(gen_step == -1){
+                setTimeout(tutLoop, 0);
+              } else{
+                document.getElementById("player-status").style.border = "";
+                document.getElementById("player-status").style.marginLeft = "";
+                document.getElementById("player-status").style.marginRight = "";
+                gen_step = 0;
+                options = 0;
+                isBattle = true;
+                addText("&nbsp");
+                addText("<span style='color: purple'>Try out more cards.</span>");
+              }
+            }
+            return;
+          }
+        }
+      }
+      if(temp_temper == 1 && (enemies[0].currentHealth < enemies[0].totalHealth/1.5)){
+        temp_temper = 2;
+        isActive = false;
+        isBattle = false;
+        gen_step = 0;
+
+        let temp_count = 0;
+
+        looopidy();
+
+        function looopidy(){
+          if(temp_count == 0){
+            document.getElementById("deck").style.border = "4px solid red";
+            addText("&nbsp");
+            addText("<span style='color: purple'>Keep an eye out for how many cards are left in your deck.</span>");
+          } else if(temp_count == 1000){
+            addText("Once you run out of cards, you lose the game.");
+          } else if(temp_count == 2000){
+            gen_step = -1;
+          }
+          if(gen_step == 0){
+            temp_count++;
+            setTimeout(looopidy, 0);
+          } else if(gen_step == -1){
+            isActive = true;
+            options = 1;
+            addText("<span style='color: purple'>(1)</span> Continue.");
+            tutLoop();
+
+            function tutLoop(){
+              if(gen_step == -1){
+                setTimeout(tutLoop, 0);
+              } else{
+                document.getElementById("deck").style.border = "";
+                gen_step = 0;
+                options = 0;
+                isBattle = true;
+                addText("&nbsp");
+                addText("<span style='color: purple'>Keep it up.</span>");
+              }
+            }
+            return;
+          }
+        }
+      }
+      if(temp_temper == 2 && (enemies[0].currentHealth < enemies[0].totalHealth/3)){
+        temp_temper = 3;
+        isActive = false;
+        isBattle = false;
+        gen_step = 0;
+
+        let temp_count = 0;
+
+        looopidy();
+
+        function looopidy(){
+          if(temp_count == 0){
+            addText("&nbsp");
+            addText("<span style='color: purple'>Don't forget to use your items in your inventory.</span>");
+          } else if(temp_count == 1000){
+            addText("Using items is crucial for keeping up your health, stamina, and mana.");
+          } else if(temp_count == 2000){
+            gen_step = -1;
+          }
+          if(gen_step == 0){
+            temp_count++;
+            setTimeout(looopidy, 0);
+          } else if(gen_step == -1){
+            isActive = true;
+            options = 1;
+            addText("<span style='color: purple'>(1)</span> Continue.");
+            tutLoop();
+
+            function tutLoop(){
+              if(gen_step == -1){
+                setTimeout(tutLoop, 0);
+              } else{
+                gen_step = 0;
+                options = 0;
+                isBattle = true;
+                addText("&nbsp");
+                addText("<span style='color: purple'>Finish off your opponent.</span>");
+              }
+            }
+            return;
+          }
+        }
+      }
+
+      //ButtonPress activation is happening here;
+      let temp = false
+      for(let i = enemies.length - 1; i >= 0; i--){
+        if(enemies[i].currentHealth <= 0){
+          addText(enemies[i].deathSpeech());
+          removeElement(document.getElementById("enemy" + i));
+          dead_enemies.push(enemies[i]);
+          enemies.splice(i, 1);
+          temp = true;
+        }
+      }
+      if(temp){
+        for(let j = 1; j < document.getElementById("enemies").childNodes.length; j++){
+          document.getElementById("enemies").childNodes[j].id = "enemy" + (j - 1);
+          document.getElementById("enemies").childNodes[j].childNodes[0].id = "enemy-status" + (j - 1);
+          document.getElementById("enemies").childNodes[j].childNodes[2].id = "enemy-health" + (j - 1);
+        }
+      }
+      if(paused){
+        loop1();
+        function loop1(){
+          if(paused) setTimeout(loop1, 0);
+          else loop();
+        }
+      } else{
+        setTimeout(loop, 0);
+      }
+    }
+  }
+}
+
+function endTutorialBattle(result){
+  isBattle = false;
+  gen_step = 0;
+
+  document.getElementById("cards").style.display = "none";
+
+  addText("&nbsp");
+  let result_loot = [];
+  total_gold = 0;
+  for(let i = 0; i < dead_enemies.length; i++){
+    player.currentExp += dead_enemies[i].exp
+
+    total_gold += dead_enemies[i].gold;
+    player.gold += dead_enemies[i].gold;
+    let drop = loot(dead_enemies[i].level);
+    if(drop){
+      addItemToInventory(drop);
+      result_loot.push(drop.name);
+    }
+  }
+
+  result_loot.push(total_gold + " gold");
+
+  let result_text = "Loot: ";
+
+  for(let i = 0; i < result_loot.length; i++){
+    if(i == result_loot.length - 1){
+      result_text += result_loot[i] + ".";
+    } else result_text += result_loot[i] + ", ";
+  }
+
+  if(result == "died"){
+    result_text = "You died. (how do you die in a tutorial...)";
+  } else if(result == "cards"){
+    result_text = "You ran out of cards. (but how...)";
+  }
+
+  addText(result_text);
+
+  options = 0;
+  setTimeout(con, 1500);
+
+  function con(){
+    addText("<p style='color: purple'>(1) Continue</p>");
+    isActive = true;
+    gen_step = 0;
+    options = 1;
+  }
+
+  loop();
+
+  function loop(){
+    if(paused){
+      setTimeout(loop, 0);
+    } else{
+      if(gen_step == 0){
+        setTimeout(loop, 0);
+      } else{
+        let points = 0;
+        while(player.currentExp >= player.totalExp){
+          player.currentHealth += Math.floor(player.totalHealth/2);
+          if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
+          player.currentStamina += Math.floor(player.totalStamina/2);
+          if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+          player.currentMana += Math.floor(player.totalMana/2);
+          if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
+
+          points++;
+          player.level++;
+          player.currentExp -= player.totalExp;
+          player.totalExp += player.totalExp/2;
+        }
+
+        checkStats();
+        gen_step = 0;
+        isActive = false;
+        levelUpLoop();
+
+        function levelUpLoop(){
+          if(gen_step == 0){
+            if(points == 0 || player.currentHealth <= 0){
+              gen_step = -2;
+              levelUpLoop();
+              return;
+            }
+            clearText();
+            addText("<span style='color: purple;'>(4)</span> Endurance: Defense, Magic Defense", true);
+            addText("<span style='color: purple;'>(3)</span> Aggression: Damage, Magic Damage", true);
+            addText("<span style='color: purple;'>(2)</span> Intellgence: HP, Mana.", true);
+            addText("<span style='color: purple;'>(1)</span> Strength: HP, Stamina", true);
+            addText("Remaining Points: " + points, true);
+            addText("You Leveled Up!", true);
+
+            isActive = true;
+            options = 4;
+            gen_step = -1;
+            levelUpLoop();
+          } else if(gen_step == -1){
+            setTimeout(levelUpLoop, 0);
+          } else if(gen_step == -2){
+            if(result == "died" || result == "cards"){
+              gameOver();
+            } else{
+              //Cleanup Step
+              isActive = false;
+              clearText();
+
+              document.getElementById("board").style.backgroundColor = "rgb(255, 255, 255)";
+              document.getElementById("characters").style.display = "none";
+              document.getElementById("info-2").style.display = "block";
+
+              player.currentAttack = player.totalAttack;
+              player.currentMagicA = player.totalMagicA;
+              player.currentDefense = player.totalMagicD;
+              player.currentMagicD = player.totalMagicD;
+
+              player.status = [];
+              statusEffect(player);
+              enemies = [];
+              dead_enemies = [];
+              tempDeck = [];
+              current_cards = [];
+              counter = 0;
+              gen_step = 0;
+
+              for(let i = 0; i < player.slots; i++){
+                removeElement(document.getElementById("c" + i));
+              }
+
+              isTutorialBattle = false;
+              return;
+            }
+          } else{
+            if(gen_step == 1){
+              player.totalHealth += 25;
+              player.currentHealth += 25;
+              player.totalStamina += 25;
+              player.currentStamina += 25;
+            } else if(gen_step == 2){
+              player.totalHealth += 25;
+              player.currentHealth += 25;
+              player.totalMana += 25;
+              player.currentMana += 25;
+            } else if(gen_step == 3){
+              player.totalAttack += 2;
+              player.currentAttack += 2;
+              player.totalMagicA += 2;
+              player.currentMagicA += 2;
+            } else if(gen_step == 4){
+              player.totalDefense += 1;
+              player.currentDefense += 1;
+              player.totalMagicD += 1;
+              player.currentMagicD += 1;
+            }
+
+            player.currentAttack = player.totalAttack;
+            player.currentMagicA = player.totalMagicA;
+            player.currentDefense = player.totalMagicD;
+            player.currentMagicD = player.totalMagicD;
+
+            checkStats();
+            gen_step = 0;
+            isActive = false;
+            points--;
+            levelUpLoop();
+          }
+
+        }
+      }
+    }
+  }
 }
 
 
@@ -2037,6 +2898,7 @@ function Character(job){
   this.level = 1;
   this.totalExp = 100;
   this.gold = randomNum(950, 49);
+  this.race = "Human";
   this.currentExp = 0;
   this.currentHealth = this.totalHealth;
   this.currentAttack = this.totalAttack;
