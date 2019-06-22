@@ -1827,6 +1827,8 @@ function tutorialBattleInitiate(){
   enemies = [];
   dead_enemies = [];
 
+  player = new Character("warrior");
+
   player.totalHealth = 300;
   player.currentHealth = 300;
   player.totalStamina = 200;
