@@ -1829,8 +1829,8 @@ function tutorialBattleInitiate(){
 
   player = new Character("warrior");
 
-  player.totalHealth = 300;
-  player.currentHealth = 300;
+  player.totalHealth = 350;
+  player.currentHealth = 350;
   player.totalStamina = 200;
   player.currentStamina = 200;
   player.totalMana = 200;
