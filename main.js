@@ -2121,6 +2121,7 @@ function tutorialBattle(){
 
         function looopidy(){
           if(temp_count == 0){
+            document.getElementById("inventory-list").style.border = "4px solid red";
             addText("&nbsp");
             addText("<span style='color: purple'>Don't forget to use your items in your inventory.</span>");
           } else if(temp_count == 1000){
@@ -2141,6 +2142,7 @@ function tutorialBattle(){
               if(gen_step == -1){
                 setTimeout(tutLoop, 0);
               } else{
+                document.getElementById("inventory-list").style.border = "";
                 gen_step = 0;
                 options = 0;
                 isBattle = true;
