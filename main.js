@@ -37,7 +37,7 @@ let allItemsCategory = {};
 let allStatus = {};
 let allStatusCategory = {};
 
-let isTesting = false;
+let isTesting = true;
 
 initialize();
 
@@ -140,7 +140,7 @@ function testingFunction(){
 
   checkStats();
 
-  tutorialBattleInitiate();
+  startFloor(current_floor);
 }
 
 function buttonPress(event){
@@ -575,14 +575,7 @@ function initCards(){
     let thing = new Card(1, "Bite", "normal", "Enemy", true, 4, 0, 0, 0, 0, 20, "Bite your foe.", ["(you) bites (enemy)'s hand.", "(you) cuts (enemy) with its teeth.", "(you) sinks its teeth into (enemy)'s flesh."]);
     thing.effect = function(){
       if(this.target.currentDefense < 4){
-        this.user.currentAttack += 2;
-      }
-    };
-    this.endEffect = function(){
-      if(this.target){
-        if(this.target.currentDefense < 4){
-          this.attack += 2;
-        }
+        pushStatus("Bleed", Math.floor(this.user.level/3) + 1, this.target);
       }
     };
     return thing;
@@ -612,7 +605,10 @@ function initCards(){
   }
 
   function HeavyAttack(){
-    let thing = new Card(1, "Heavy Attack", "normal", "Warrior", true, 12, 0, 0, 0, 0, 30, "A strong attack.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    let thing = new Card(1, "Heavy Attack", "normal", "Warrior", true, 5, 0, 0, 0, 0, 30, "A strong attack based on your defense.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+    thing.effect = function(){
+      this.attack += this.user.totalDefense;
+    }
     return thing;
   }
   function BloodStrike(){
@@ -676,7 +672,7 @@ function initCards(){
       pushStatus("Burn", 1, this.target);
       if(this.user == player){
         for(let i = 0; i < enemies.length; i++){
-          let damage = user.currentMagicA + Math.floor(user.currentMagicA/2);
+          let damage = this.user.currentMagicA + Math.floor(this.user.currentMagicA/2);
           if(damage < 0) damage = 0;
           enemies[i].currentHealth -= damage;
         }
@@ -685,7 +681,7 @@ function initCards(){
     return thing;
   }
   function MinorFocus(){
-    let thing = new Card(1, "Minor Focus", "normal", "Mage", true, 0, 0, 2, 2, 0, 0, "Lose health. Restore mana and stamina. Minor def buff.", ["(you) focuses thought."]);
+    let thing = new Card(1, "Minor Focus", "normal", "Mage", false, 0, 0, 2, 2, 0, 0, "Lose health. Restore mana and stamina. Minor def buff.", ["(you) focuses thought."]);
     thing.effect = function() {
       pushStatus("Defense Buff", 1, this.user);
       this.user.currentHealth -= 15;
@@ -1106,9 +1102,7 @@ function startFloor(floor){
   current_floor = floor;
   document.getElementById("current-floor").innerHTML = "Floor " + current_floor;
 
-  let race;
-  if(floor % 2) race = allEnemiesCategory["Level"](floor);
-  else race = allEnemiesCategory["Level"](floor - 1);
+  let race = allEnemiesCategory["Level"](floor);
 
   counter = 0;
 
@@ -1117,7 +1111,7 @@ function startFloor(floor){
   function loop(){
     if(counter == 800){
       let path = Math.floor(Math.random() * 1000);
-      // path = 475;
+      path = 250;
 
       if(path >= 0 && path < 50){
         counter = 0;
@@ -1395,7 +1389,8 @@ function startFloor(floor){
           } else if(temp_counter == 1400){
             clearText();
             addText("<span style='color: purple;'>(2)</span> Walk away.", true);
-            addText("<span style='color: purple;'>(1)</span> Heal: " + temp_cost + " gold.", true);
+            if(temp_finding == 0) addText("<span style='color: purple;'>(1)</span> Take a dip (heal): " + temp_cost + " gold.", true);
+            else addText("<span style='color: purple;'>(1)</span> Activate machine (heal): " + temp_cost + " gold.", true);
             addText("Remaining Gold: " + player.gold, true);
 
             options = 2;
@@ -1412,11 +1407,11 @@ function startFloor(floor){
 
             if(player.gold > temp_cost){
               player.gold -= temp_cost;
-              player.currentHealth += 35;
+              player.currentHealth += 40;
               if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
-              player.currentStamina += 35;
+              player.currentStamina += 40;
               if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
-              player.currentMana += 35;
+              player.currentMana += 40;
               if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
               temp_used = true;
               checkStats();
@@ -2758,6 +2753,19 @@ function activateCard(cardNum, target){
       }
       statusEffect(player);
 
+      //TESTING
+      for(let i = 0; i< enemies.length; i++){
+        console.log(i + " " + enemies[i].name + " TH: " + enemies[i].totalHealth + "; CH: " + enemies[i].currentHealth);
+        console.log(i + " " + enemies[i].name + " TA: " + enemies[i].totalAttack + "; CA: " + enemies[i].currentAttack + " TMA: " + enemies[i].totalMagicA + "; CMA: " + enemies[i].currentMagicA);
+        console.log(i + " " + enemies[i].name + " TD: " + enemies[i].totalDefense + "; CD: " + enemies[i].currentDefense + " TMD: " + enemies[i].totalMagicD + "; CMD: " + enemies[i].currentMagicD);
+        console.log(" ");
+      }
+
+      console.log(player.name + " TH: " + player.totalHealth + "; CH: " + player.currentHealth);
+      console.log(player.name + " TA: " + player.totalAttack + "; CA: " + player.currentAttack + " TMA: " + player.totalMagicA + "; CMA: " + player.currentMagicA);
+      console.log(player.name + " TD: " + player.totalDefense + "; CD: " + player.currentDefense + " TMD: " + player.totalMagicD + "; CMD: " + player.currentMagicD);
+      console.log("-----------");
+
       document.getElementById("c" + cardNum).style.border = "none";
 
     } else{
@@ -2798,6 +2806,20 @@ function activateCard(cardNum, target){
       statusEffect(enemies[i], i);
     }
     statusEffect(player);
+
+    //Testing
+    for(let i = 0; i< enemies.length; i++){
+      console.log(i + " " + enemies[i].name + " TH: " + enemies[i].totalHealth + "; CH: " + enemies[i].currentHealth);
+      console.log(i + " " + enemies[i].name + " TA: " + enemies[i].totalAttack + "; CA: " + enemies[i].currentAttack + " TMA: " + enemies[i].totalMagicA + "; CMA: " + enemies[i].currentMagicA);
+      console.log(i + " " + enemies[i].name + " TD: " + enemies[i].totalDefense + "; CD: " + enemies[i].currentDefense + " TMD: " + enemies[i].totalMagicD + "; CMD: " + enemies[i].currentMagicD);
+      console.log(" ");
+    }
+
+    console.log(player.name + " TH: " + player.totalHealth + "; CH: " + player.currentHealth);
+    console.log(player.name + " TA: " + player.totalAttack + "; CA: " + player.currentAttack + " TMA: " + player.totalMagicA + "; CMA: " + player.currentMagicA);
+    console.log(player.name + " TD: " + player.totalDefense + "; CD: " + player.currentDefense + " TMD: " + player.totalMagicD + "; CMD: " + player.currentMagicD);
+    console.log("-----------");
+
     document.getElementById("c" + cardNum).style.border = "none";
     battleStep = 0;
   }
