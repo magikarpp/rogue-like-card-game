@@ -37,7 +37,7 @@ let allItemsCategory = {};
 let allStatus = {};
 let allStatusCategory = {};
 
-let isTesting = true;
+let isTesting = false;
 
 initialize();
 
@@ -425,12 +425,18 @@ function initEnemies(){
       allEnemies["Elf Ravager"] = ElfRavager;
       allEnemies["Elf Tyrant"] = ElfTyrant;
 
+      allEnemies["Giant Beetle"] = GiantBeetle;
+      allEnemies["Giant Mantis"] = GiantMantis;
+      allEnemies["Giant Cockroach"] = GiantCockroach;
+      allEnemies["Giant Butterfly"] = GiantButterfly;
+      allEnemies["Giant Wasp"] = GiantWasp;
+
       function ElfWarrior(){
-        let dude = new Enemy(3, 24, randomNum(185, 5), 80, "Elf Warrior", "Elf", "normal", randomNum(34, 2), 2, 1, 2, 1, [], ["An Elf stands in your way.", "An Elf catches you in its sight."], [], ["Elf falls to the ground."]);
+        let dude = new Enemy(3, 24, randomNum(185, 5), 80, "Elf Warrior", "Elf", "normal", randomNum(38, 2), 3, 2, 3, 2, [], ["An Elf stands in your way.", "An Elf catches you in its sight."], [], ["Elf falls to the ground."]);
         pushCard("Attack", dude);
         pushCard("Attack", dude);
-        pushCard("Attack", dude);
-        pushCard("Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Heavy Attack", dude);
         pushCard("Small Energy Ball", dude);
         pushCard("Small Energy Ball", dude);
         pushCard("Minor Atk. Buff", dude);
@@ -438,7 +444,7 @@ function initEnemies(){
         return dude;
       }
       function DarkElf(){
-        let dude = new Enemy(3, 26, randomNum(195, 5), 80, "Dark Elf", "Elf", "normal", randomNum(28, 2), 1, 2, 1, 2, [], ["A Dark Elf stands in your way.", "A Dark Elf appears out of nowhere."], [], ["Dark Elf lets out a scream."]);
+        let dude = new Enemy(3, 26, randomNum(195, 5), 80, "Dark Elf", "Elf", "normal", randomNum(30, 2), 2, 3, 2, 3, [], ["A Dark Elf stands in your way.", "A Dark Elf appears out of nowhere."], [], ["Dark Elf lets out a scream."]);
         pushCard("Attack", dude);
         pushCard("Attack", dude);
         pushCard("Attack", dude);
@@ -457,8 +463,8 @@ function initEnemies(){
         return dude;
       }
       function ElfRavager(){
-        let dude = new Enemy(3, 28, randomNum(200, 5), 45, "Elf Ravager", "Elf", "normal", randomNum(38, 2), 3, 2, 2, 2, [], ["An Elf Ravager Screams towards you.", "You see an Elf Ravager eating a corpse."], [], ["Elf Ravager breaks down to its knees."]);
-        pushCard("Attack", dude);
+        let dude = new Enemy(3, 28, randomNum(200, 5), 45, "Elf Ravager", "Elf", "normal", randomNum(42, 2), 4, 3, 3, 3, [], ["An Elf Ravager Screams towards you.", "You see an Elf Ravager eating a corpse."], [], ["Elf Ravager breaks down to its knees."]);
+        pushCard("Heavy Attack", dude);
         pushCard("Attack", dude);
         pushCard("Bite", dude);
         pushCard("Bite", dude);
@@ -466,13 +472,57 @@ function initEnemies(){
         return dude;
       }
       function ElfTyrant(){
-        let dude = new Enemy(1, 100, randomNum(1500, 100), 100, "Elf Tyrant", "Elf-Boss", "normal", randomNum(95, 3), randomNum(12, 1), 6, 5, 5, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
+        let dude = new Enemy(1, 115, randomNum(1500, 100), 100, "Elf Tyrant", "Elf-Boss", "normal", randomNum(105, 3), randomNum(12, 1), 8, 5, 5, [], ["Goblin Warchief screeches out at your sight.", "You see an Elf Tyrant sitting in its throne.", "An Elf Tyrant stares down at you from its throne."], [], ["Elf Tyrant screams its last breath."]);
         pushCard("Heavy Attack", dude);
         pushCard("Flame Sword", dude);
         pushCard("Lightning Strike", dude);
         pushCard("Fireball", dude);
         pushCard("Roar", dude);
         pushCard("Attack", dude);
+        return dude;
+      }
+
+      function GiantBeetle(){
+        let dude = new Enemy(3, 26, randomNum(195, 5), 80, "Giant Beetle", "Insect", "normal", randomNum(46, 2), 6, 1, 4, 3, [], ["A Giant Beetle crashes in front of you.", "Thats... a large beetle."], [], ["The Beetle screeches in pain."]);
+        pushCard("Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Bite", dude);
+        return dude;
+      }
+      function GiantMantis(){
+        let dude = new Enemy(3, 26, randomNum(195, 5), 80, "Giant Mantis", "Insect", "normal", randomNum(42, 2), 8, 2, 3, 2, [], ["Is that a.. Giant Mantis?", "Thats... a large Mantis."], [], ["The Mantis oozes blue blood."]);
+        pushCard("Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Cut", dude);
+        pushCard("Cut", dude);
+        pushCard("Bite", dude);
+        return dude;
+      }
+      function GiantCockroach(){
+        let dude = new Enemy(3, 22, randomNum(175, 5), 60, "Giant Cockroach", "Insect", "normal", randomNum(90, 2), 1, 1, 5, 5, [], ["Ew. A cockroach.", "A Giant Cockroach slithers your way."], [], ["The Giant Cockroach twitches on its stomach."]);
+        pushCard("Attack", dude);
+        pushCard("Bite", dude);
+        return dude;
+      }
+      function GiantButterfly(){
+        let dude = new Enemy(3, 28, randomNum(201, 5), 65, "Giant Butterfly", "Insect", "poison", randomNum(42, 2), 3, 6, 2, 5, [], ["A Giant Butterfly flies towards you."], [], ["The Giant Butterfly crashes to the ground."]);
+        pushCard("Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Cut", dude);
+        pushCard("Poison Gas", dude);
+        pushCard("Poison Gas", dude);
+        pushCard("Poison Breath", dude);
+        return dude;
+      }
+      function GiantWasp(){
+        let dude = new Enemy(3, 115, randomNum(201, 5), 65, "Giant Wasp", "Insect-Boss", "poison", randomNum(128, 2), randomNum(12, 2), randomNum(12, 2), 5, 5, [], ["You hear the vibrations of a Giant Wasp."], [], ["That is one big ass wasp."]);
+        pushCard("Double Strike", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Cut", dude);
+        pushCard("Poison Gas", dude);
+        pushCard("Poison Breath", dude);
+        pushCard("Bite", dude);
         return dude;
       }
     }
@@ -521,6 +571,7 @@ function initEnemies(){
     if(race == "Goblin") return 3;
     else if(race == "Zombie") return 2;
     else if(race == "Elf") return 3;
+    else if(race == "Insect") return 2;
     else return 2;
   }
 
@@ -542,378 +593,401 @@ function initCards(){
   initAllCards();
 
   function initAllCards(){
-  //Job: Any
-  //Lvl: 1
-  allCards["Attack"] = Attack;
-  allCards["Attack1"] = Attack;
-  allCards["Do Nothing"] = DoNothing;
-  allCards["Do Nothing1"] = DoNothing;
-  allCards["Do Nothing2"] = DoNothing;
-  allCards["Rest"] = Rest;
-  allCards["Rest1"] = Rest;
-  allCards["Rest2"] = Rest;
-  //Lvl 2
-  allCards["Minor Atk. Buff"] = MinorAttackBuff;
-  allCards["Minor Def. Buff"] = MinorDefenseBuff;
-  allCards["Minor Atk. Curse"] = MinorAttackCurse;
-  allCards["Minor Def. Curse"] = MinorDefenseCurse;
-  allCards["Small Energy Ball"] = SmallEnergyBall;
-  //Lvl 3
-  allCards["Sleep"] = Sleep;
-  allCards["Sleep1"] = Sleep;
+  
+    anyJobCards();
+    enemyCards();
+    warriorCards();
+    rogueCards();
+    mageCards();
 
+    function anyJobCards(){
+      //Lvl: 1
+      allCards["Attack"] = Attack;
+      allCards["Attack1"] = Attack;
+      allCards["Do Nothing"] = DoNothing;
+      allCards["Do Nothing1"] = DoNothing;
+      allCards["Do Nothing2"] = DoNothing;
+      allCards["Rest"] = Rest;
+      allCards["Rest1"] = Rest;
+      allCards["Rest2"] = Rest;
+      //Lvl 2
+      allCards["Minor Atk. Buff"] = MinorAttackBuff;
+      allCards["Minor Def. Buff"] = MinorDefenseBuff;
+      allCards["Minor Atk. Curse"] = MinorAttackCurse;
+      allCards["Minor Def. Curse"] = MinorDefenseCurse;
+      allCards["Small Energy Ball"] = SmallEnergyBall;
+      //Lvl 3
+      allCards["Sleep"] = Sleep;
+      allCards["Sleep1"] = Sleep;
 
-  //Enemy Cards
-  allCards["Bite"] = Bite;
-  allCards["Roar"] = Roar;
-  allCards["Flame Breath"] = FlameBreath;
-  allCards["Poison Breath"] = PoisonBreath;
-
-  //Warrior
-  //Lvl 1
-  allCards["Heavy Attack"] = HeavyAttack;
-  allCards["Blood Strike"] = BloodStrike;
-  allCards["Flame Sword"] = FlameSword;
-  //Lvl 3
-  allCards["Berserk"] = Berserk;
-  allCards["Decapitate"] = Decapitate;
-  allCards["Massive Sword"] = MassiveSword;
-
-  //Rogue
-  //Lvl 1
-  allCards["Cycle"] = Cycle;
-  allCards["Double Strike"] = DoubleStrike;
-  allCards["Theft"] = Theft;
-  //Lvl 3
-  allCards["Assasinate"] = Assasinate;
-  allCards["Spike Trap"] = SpikeTrap;
-  allCards["Conjure C4"] = ConjureC4;
-
-  //Mage
-  //Lvl 1
-  allCards["Fireball"] = Fireball;
-  allCards["Minor Focus"] = MinorFocus;
-  allCards["Lightning Strike"] = LightningStrike;
-  //Lvl 3
-  allCards["Tsunami"] = Tsunami;
-  allCards["Syphon Life"] = SyphonLife;
-  allCards["Holy Light"] = HolyLight;
-
-  allCardsCategory["Job"] = Job;
-  }
-
-  function Attack(){
-    let thing = new Card(1, "Attack", "normal", "Any", true, 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
-    return thing;
-  }
-  function DoNothing(){
-    let thing = new Card(1, "Do Nothing", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
-    return thing;
-  }
-  function Rest(){
-    let thing = new Card(1, "Rest", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Recover small health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) rests."]);
-    thing.effect = function(){
-      this.user.currentHealth += 10;
-      if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += 25;
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.currentMana += 15;
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-    };
-    return thing;
-  }
-  function MinorAttackBuff(){
-    let thing = new Card(2, "Minor Atk. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you)'s attacks feels a slight surge of aggression.", "(you)'s attacks feels slightly stronger."]);
-    thing.effect = function(){
-      pushStatus("Attack Buff", Math.floor(this.user.level/2.5), this.user);
-    };
-    return thing;
-  }
-  function MinorDefenseBuff(){
-    let thing = new Card(2, "Minor Def. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you)'s defense feels slightly sturdier.", "(you)'s defense feels slightly stronger."]);
-    thing.effect = function(){
-      pushStatus("Defense Buff", Math.floor(this.user.level/2.75), this.user);
-    };
-    return thing;
-  }
-  function MinorAttackCurse(){
-    let thing = new Card(2, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy)'s attacks feels weaker from curse."]);
-    thing.effect = function(){
-      pushStatus("Attack Curse", Math.floor(this.user.level/2.5), this.target);
-    };
-    return thing;
-  }
-  function MinorDefenseCurse(){
-    let thing = new Card(2, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy)'s defense.", "(enemy) defense feels weaker from curse."]);
-    thing.effect = function(){
-      pushStatus("Defense Curse", Math.floor(this.user.level/2.75), this.target);
-    };
-    return thing;
-  }
-  function SmallEnergyBall(){
-    let thing = new Card(2, "Small Energy Ball", "normal", "Any", true, 0, 8, 0, 0, 0, 35, "A ball of energy.", ["(you) shoot out a ball of energy."]);
-    return thing;
-  }
-  function Sleep(){
-    let thing = new Card(3, "Sleep", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Recover good health, stamina, and mana.", ["(you) snores.", "(you) takes a nap.", "(enemy) looks confused as (you) sleeps."]);
-    thing.effect = function(){
-      this.user.currentHealth += 18;
-      if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += 42;
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.currentMana += 25;
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-    };
-    return thing;
-  }
-
-  function Bite(){
-    let thing = new Card(1, "Bite", "normal", "Enemy", true, 4, 0, 0, 0, 0, 20, "Bite your foe.", ["(you) bites (enemy)'s hand.", "(you) cuts (enemy) with its teeth.", "(you) sinks its teeth into (enemy)'s flesh."]);
-    thing.effect = function(){
-      if(this.target.currentDefense < this.user.currentAttack){
-        pushStatus("Bleed", Math.floor(this.user.level/3) + 1, this.target);
+      function Attack(){
+        let thing = new Card(1, "Attack", "normal", "Any", true, 5, 0, 0, 0, 0, 20, "A normal attack.", ["(you) takes a swing at (enemy).", "(you) swings at (enemy).", "(you) pokes (enemy).", "(you) smacks (enemy)."]);
+        return thing;
       }
-    };
-    return thing;
-  }
-  function Roar(){
-    let thing = new Card(2, "Roar", "normal", "Enemy", true, 0, 0, 0, 0, 5, 20, "Invigorate your allies.", ["(you) lets out a piercing roar. (you)'s allies have attack buffs."]);
-    thing.effect = function(){
-      for(let i = 0; i < enemies.length; i++){
-        pushStatus("Attack Buff", Math.floor(this.user.level/2.85), enemies[i]);
+      function DoNothing(){
+        let thing = new Card(1, "Do Nothing", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Do Nothing.", ["(you) does nothing.", "(you) durdles."]);
+        return thing;
       }
-    };
-    return thing;
-  }
-  function PoisonBreath(){
-    let thing = new Card(1, "Poison Breath", "poison", "Enemy", true, 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) breathes poison onto (enemy).", "(you) covers (enemy) in poison."]);
-    thing.effect = function(){
-      pushStatus("Poison", Math.floor(this.user.level/2.5), this.target);
-    };
-    return thing;
-  }
-  function FlameBreath(){
-    let thing = new Card(1, "Flame Breath", "fire", "Enemy", true, 0, 15, 0, 0, 40, 0, "Deal damage and inflict Burn.", ["(you) breathes fire onto (enemy).", "(you) covers (enemy) with a breath of fire."]);
-    thing.effect = function(){
-      pushStatus("Burn", Math.floor(this.user.level/2.5), this.target);
-    };
-    return thing;
-  }
-
-  function HeavyAttack(){
-    let thing = new Card(1, "Heavy Attack", "normal", "Warrior", true, 5, 0, 0, 0, 0, 30, "A strong attack based on your defense.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
-    thing.effect = function(){
-      this.attack += this.user.totalDefense;
-    }
-    return thing;
-  }
-  function BloodStrike(){
-    let thing = new Card(1, "Blood Strike", "normal", "Warrior", true, 5, 0, 0, 0, 10, 35, "Hit an enemy with lifesteal.", ["(you) feasts on (enemy)'s blood."]);
-    thing.effect = function(){
-      this.attack += Math.floor(this.user.currentAttack/2);
-      if(this.target.race.includes("Undead")){
-        addText(this.user.name + " is poisoned attempting to steal Undead blood.");
-        pushStatus("Poison", Math.floor(this.user.level/4), this.user);
-      } else{
-        this.user.currentHealth += Math.floor(this.user.currentAttack * 2);
-        if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+      function Rest(){
+        let thing = new Card(1, "Rest", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Recover small health, stamina, and mana.", ["(you) rests for a second.", "(you) relaxes.", "(enemy) looks confused as (you) rests."]);
+        thing.effect = function(){
+          this.user.currentHealth += 10;
+          if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+          this.user.currentStamina += 25;
+          if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+          this.user.currentMana += 15;
+          if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-  function FlameSword(){
-    let thing = new Card(1, "Flame Sword", "fire", "Warrior", true, 8, 0, 0, 0, 25, 25, "Engulf your sword with fire. Inflict Burn.", ["(you) sets sword on fire.", "(you)'s sword dances in flames."]);
-    thing.effect = function(){
-      pushStatus("Burn", Math.floor(this.user.level/3), this.target);
-      this.attack += this.user.currentMagicA;
-    };
-    return thing;
-  }
-  function Berserk(){
-    let thing = new Card(3, "Berserk", "normal", "Warrior", false, 0, 0, 0, 0, 50, 0, "Take damage to increases attack and defense greatly.", ["(you)'s muscles pulsates with rage.", "(you)'s eyes turn bloodshot red."]);
-    thing.effect = function(){
-      this.user.currentHealth -= Math.floor(this.user.totalHealth * 0.1);
-      pushStatus("Attack Buff", Math.floor(this.user.level/1.75), this.user);
-      pushStatus("Defense Buff", Math.floor(this.user.level/1.75), this.user);
-    };
-    return thing;
-  }
-  function Decapitate(){
-    let thing = new Card(3, "Decapitate", "normal", "Warrior", true, 5, 0, 0, 0, 0, 50, "Deal extra damage to damaged enemies.", ["(you) cuts (enemy)'s head.", "(you) swings at (enemy)'s head."]);
-    thing.effect = function(){
-      if(this.target.currentHealth < this.target.totalHealth / 2){
-        this.attack += Math.floor(this.user.currentAttack * 2);
+      function MinorAttackBuff(){
+        let thing = new Card(2, "Minor Atk. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase attack slightly.", ["(you)'s attacks feels a slight surge of aggression.", "(you)'s attacks feels slightly stronger."]);
+        thing.effect = function(){
+          pushStatus("Attack Buff", Math.floor(this.user.level/2.5), this.user);
+        };
+        return thing;
+      }
+      function MinorDefenseBuff(){
+        let thing = new Card(2, "Minor Def. Buff", "normal", "Any", false, 0, 0, 0, 0, 20, 0, "Increase defense slightly.", ["(you)'s defense feels slightly sturdier.", "(you)'s defense feels slightly stronger."]);
+        thing.effect = function(){
+          pushStatus("Defense Buff", Math.floor(this.user.level/2.75), this.user);
+        };
+        return thing;
+      }
+      function MinorAttackCurse(){
+        let thing = new Card(2, "Minor Atk. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Atk. slightly.", ["(you) curses (enemy)'s attacks.", "(enemy)'s attacks feels weaker from curse."]);
+        thing.effect = function(){
+          pushStatus("Attack Curse", Math.floor(this.user.level/2.5), this.target);
+        };
+        return thing;
+      }
+      function MinorDefenseCurse(){
+        let thing = new Card(2, "Minor Def. Curse", "normal", "Any", true, 0, 0, 0, 0, 20, 0, "Decreases enemy Def. slightly.", ["(you) curses (enemy)'s defense.", "(enemy) defense feels weaker from curse."]);
+        thing.effect = function(){
+          pushStatus("Defense Curse", Math.floor(this.user.level/2.75), this.target);
+        };
+        return thing;
+      }
+      function SmallEnergyBall(){
+        let thing = new Card(2, "Small Energy Ball", "normal", "Any", true, 0, 8, 0, 0, 0, 35, "A ball of energy.", ["(you) shoot out a ball of energy."]);
+        return thing;
+      }
+      function Sleep(){
+        let thing = new Card(3, "Sleep", "normal", "Any", false, 0, 0, 0, 0, 0, 0, "Recover good health, stamina, and mana.", ["(you) snores.", "(you) takes a nap.", "(enemy) looks confused as (you) sleeps."]);
+        thing.effect = function(){
+          this.user.currentHealth += 18;
+          if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+          this.user.currentStamina += 42;
+          if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+          this.user.currentMana += 25;
+          if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
+        };
+        return thing;
       }
     }
-    return thing;
-  }
-  function MassiveSword(){
-    let thing = new Card(3, "Massive Sword", "normal", "Warrior", true, 10, 0, 0, 0, 25, 45, "Strike with a massive magic sword.", ["(you)'s sword becomes massive.", "(you)'s strikes with a massive sword."]);
-    thing.effect = function(){
-      pushStatus("Attack Buff", Math.floor(this.user.level/2.5), this.user);
-      this.attack += this.user.currentMagicA;
-    };
-    return thing;
-  }
+    function enemyCards(){
+      //Enemy Cards
+      allCards["Bite"] = Bite;
+      allCards["Roar"] = Roar;
+      allCards["Flame Breath"] = FlameBreath;
+      allCards["Poison Breath"] = PoisonBreath;
+      allCards["Poison Gas"] = PoisonGas;
+      allCards["Cut"] = Cut;
 
-  function Cycle(){
-    let thing = new Card(1, "Cycle", "normal", "Rogue", false, 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
-    thing.effect = function(){
-      for(let i = 0; i < this.user.slots; i++){
-        setCardAt(i);
+      function Bite(){
+        let thing = new Card(1, "Bite", "normal", "Enemy", true, 4, 0, 0, 0, 0, 20, "Bite your foe.", ["(you) bites (enemy)'s hand.", "(you) cuts (enemy) with its teeth.", "(you) sinks its teeth into (enemy)'s flesh."]);
+        thing.effect = function(){
+          if(this.target.currentDefense < this.user.currentAttack){
+            pushStatus("Bleed", Math.floor(this.user.level/3) + 1, this.target);
+          }
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-  function DoubleStrike(){
-    let thing = new Card(1, "Double Strike", "normal", "Rogue", true, 5, 0, 0, 0, 0, 20, "Strike twice at enemy.", ["(you) hits (enemy) twice.", "(you) strikes (enemy) twice."]);
-    thing.effect = function(){
-      this.attack += this.user.currentAttack;
-    };
-    return thing;
-  }
-  function Theft(){
-    let thing = new Card(1, "Theft", "normal", "Rogue", true, 5, 0, 0, 0, 10, 20, "Hit with a chance to steal item.", ["(you) attempts to pocket (enemy).", "(you) attempts to go through (enemy)'s pockets."]);
-    thing.effect = function(){
-      let dude = allItemsCategory["Drop"](this.target.level);
-      if(!dude) dude = allItemsCategory["Drop"](this.target.level);
-      if(!dude) dude = allItemsCategory["Drop"](this.target.level);
-      if(dude){
-        addText("Sucessfully stole " + dude.name + ".");
-        addItemToInventory(dude);
-      } else{
-        addText("Found nothing to steal.");
+      function Roar(){
+        let thing = new Card(2, "Roar", "normal", "Enemy", true, 0, 0, 0, 0, 5, 20, "Invigorate your allies.", ["(you) lets out a piercing roar. (you)'s allies have attack buffs."]);
+        thing.effect = function(){
+          for(let i = 0; i < enemies.length; i++){
+            pushStatus("Attack Buff", Math.floor(this.user.level/2.85), enemies[i]);
+          }
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-  function Assasinate(){
-    let thing = new Card(3, "Assasinate", "normal", "Rogue", true, 5, 0, 0, 0, 0, 45, "Deal a fatal blow to a dying enemy.", ["(you) slices (enemy)'s throat.", "(you) strikes at (enemy)'s heart."]);
-    thing.effect = function(){
-      if(this.target.currentHealth < this.target.totalHealth/3){
-        this.target.currentHealth = 0;
+      function PoisonBreath(){
+        let thing = new Card(1, "Poison Breath", "poison", "Enemy", true, 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) breathes poison onto (enemy).", "(you) covers (enemy) in poison."]);
+        thing.effect = function(){
+          pushStatus("Poison", Math.floor(this.user.level/2.5), this.target);
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-  function SpikeTrap(){
-    let thing = new Card(3, "Spike Trap", "normal", "Rogue", false, 0, 0, 0, 0, 0, 20, "Spike traps that inflict bleed and lowers defense.", ["(you) sets up spike traps.", "(you) scatter spikes around the floor."]);
-    thing.effect = function(){
-      if(this.user == player){
-        for(let i = 0; i < enemies.length; i++){
-          pushStatus("Bleed", Math.floor(this.user.level/3), enemies[i]);
-          pushStatus("Defense Curse", Math.floor(this.user.level/2.5), enemies[i]);
-        }
+      function FlameBreath(){
+        let thing = new Card(1, "Flame Breath", "fire", "Enemy", true, 0, 15, 0, 0, 40, 0, "Deal damage and inflict Burn.", ["(you) breathes fire onto (enemy).", "(you) covers (enemy) with a breath of fire."]);
+        thing.effect = function(){
+          pushStatus("Burn", Math.floor(this.user.level/2.5), this.target);
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-  function ConjureC4(){
-    let thing = new Card(3, "Conjure C4", "normal", "Rogue", false, 0, 0, 0, 0, 75, 0, "A condensed mana C4.", ["(you) conjures a C4 bomb.", "(you) conjures a C4 and hides."]);
-    thing.effect = function(){
-      if(this.user == player){
-        for(let i = 0; i < enemies.length; i++){
-          pushStatus("Burn", Math.floor(this.user.level/3), enemies[i]);
-          enemies[i].currentHealth -= this.user.currentMagicA * 3;
-        }
+      function PoisonGas(){
+        let thing = new Card(3, "Poison Gas", "poison", "Enemy", true, 0, 8, 0, 0, 40, 0, "Deal damage and inflict Poison.", ["(you) releases poison into the air.", "(you) covers (enemy) in poison."]);
+        thing.effect = function(){
+          pushStatus("Poison", Math.floor(this.user.level/3), this.target);
+        };
+        return thing;
       }
-    };
-    return thing;
-  }
-
-  function Fireball(){
-    let thing = new Card(1, "Fireball", "fire", "Mage", true, 0, 3, 0, 0, 60, 0, "A ball of fire with AoE. Inflicts minor Burn.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
-    thing.effect = function() {
-      pushStatus("Burn", Math.floor(this.user.level/3), this.target);
-      if(this.user == player){
-        for(let i = 0; i < enemies.length; i++){
-          let damage = this.user.currentMagicA + Math.floor(this.user.currentMagicA/2);
-          if(damage < 0) damage = 0;
-          enemies[i].currentHealth -= damage;
-        }
-      }
-    };
-    return thing;
-  }
-  function MinorFocus(){
-    let thing = new Card(1, "Minor Focus", "normal", "Mage", false, 0, 0, 2, 2, 0, 0, "Lose health. Restore mana and stamina. Minor def buff.", ["(you) focuses thought."]);
-    thing.effect = function() {
-      pushStatus("Defense Buff", Math.floor(this.user.level/3), this.user);
-      this.user.currentHealth -= 15;
-
-      this.user.currentMana += 45;
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-      this.user.currentStamina += 35;
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-    };
-    return thing;
-  }
-  function LightningStrike(){
-    let thing = new Card(1, "Lightning Strike", "thunder", "Mage", true, 0, 10, 0, 0, 50, 0, "Strike one enemy with lightning.", ["(you) sends a bolt of lightning at (enemy).", "(enemy) gets shocked by (you)"]);
-    thing.effect = function(){
-      this.attack += this.user.currentMagicA;
-    }
-    return thing;
-  }
-  function Tsunami(){
-    let thing = new Card(3, "Tsunami", "water", "Mage", false, 0, 0, 0, 0, 85, 0, "Summon a massive Tsunami.", ["A turbulent tidal wave crashes through.", "(you) summons a massive Tsunami."]);
-    thing.effect = function() {
-      if(this.user == player){
-        for(let i = 0; i < enemies.length; i++){
-          let damage = this.user.currentMagicA * 3;
-          if(damage < 0) damage = 0;
-          enemies[i].currentHealth -= damage;
-        }
-      }
-    };
-    return thing;
-  }
-  function SyphonLife(){
-    let thing = new Card(3, "Syphon Life", "normal", "Mage", true, 0, 10, 0, 0, 75, 0, "Steal health and stamina", ["(you) steal (enemy)'s life.", "(enemy)'s life force seeps into (you)"]);
-    thing.effect = function(){
-      this.attack += this.user.currentMagicA;
-
-      if(this.target.race.includes("Undead")){
-        addText(this.user.name + " is poisoned attempting to steal Undead blood.");
-        pushStatus("Poison", Math.floor(this.user.level/4), this.user);
-      } else{
-        this.user.currentHealth += Math.floor(this.attack * 2);
-        if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-        this.user.currentStamina += Math.floor(this.attack * 1.5);
-        if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+      function Cut(){
+        let thing = new Card(3, "Cut", "normal", "Enemy", true, 0, 10, 0, 0, 40, 0, "Deal damage and inflict Bleed.", ["(you) cuts (enemy)."]);
+        thing.effect = function(){
+          pushStatus("Bleed", Math.floor(this.user.level/3), this.target);
+        };
+        return thing;
       }
     }
-    return thing;
-  }
-  function HolyLight(){
-    let thing = new Card(3, "Holy Light", "light", "Mage", false, 0, 0, 0, 0, 65, 0, "Heals and removes debuffs. Damages undead.", ["Holy light shines through the area.", "A bright warm light engulfs the room."]);
-    thing.effect = function() {
-      addText("The light removes all illness of " + this.user.name + ".");
-      for(let i = this.user.status.length - 1; i >= 0; i--){
-        if(this.user.status[i].type == "Debuff"){
-          this.user.status[i].endEffect();
-          this.user.status.splice(i, 1);
+    function warriorCards(){
+      //Lvl 1
+      allCards["Heavy Attack"] = HeavyAttack;
+      allCards["Blood Strike"] = BloodStrike;
+      allCards["Flame Sword"] = FlameSword;
+      //Lvl 3
+      allCards["Berserk"] = Berserk;
+      allCards["Decapitate"] = Decapitate;
+      allCards["Massive Sword"] = MassiveSword;
+
+      function HeavyAttack(){
+        let thing = new Card(1, "Heavy Attack", "normal", "Warrior", true, 5, 0, 0, 0, 0, 30, "A strong attack based on your defense.", ["(you) bashes in (enemy)'s head.", "(you) deals a crushing blow to (enemy)."]);
+        thing.effect = function(){
+          this.attack += this.user.totalDefense;
         }
+        return thing;
       }
-
-      this.user.currentHealth += Math.floor(this.user.totalHealth * 0.15);
-      if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += Math.floor(this.user.totalStamina * 0.15);
-      if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.currentMana += Math.floor(this.user.totalMana * 0.15);
-      if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
-
-      if(this.user == player){
-        for(let i = 0; i < enemies.length; i++){
-          if(enemies[i].race.includes("Undead")){
-            let damage = this.user.currentMagicA * 2;
-            if(damage < 0) damage = 0;
-            enemies[i].currentHealth -= damage;
+      function BloodStrike(){
+        let thing = new Card(1, "Blood Strike", "normal", "Warrior", true, 5, 0, 0, 0, 10, 35, "Hit an enemy with lifesteal.", ["(you) feasts on (enemy)'s blood."]);
+        thing.effect = function(){
+          this.attack += Math.floor(this.user.currentAttack/2);
+          if(this.target.race.includes("Undead")){
+            addText(this.user.name + " is poisoned attempting to steal Undead blood.");
+            pushStatus("Poison", Math.floor(this.user.level/4), this.user);
+          } else{
+            this.user.currentHealth += Math.floor(this.user.currentAttack * 2);
+            if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+          }
+        };
+        return thing;
+      }
+      function FlameSword(){
+        let thing = new Card(1, "Flame Sword", "fire", "Warrior", true, 8, 0, 0, 0, 25, 25, "Engulf your sword with fire. Inflict Burn.", ["(you) sets sword on fire.", "(you)'s sword dances in flames."]);
+        thing.effect = function(){
+          pushStatus("Burn", Math.floor(this.user.level/3), this.target);
+          this.attack += this.user.currentMagicA;
+        };
+        return thing;
+      }
+      function Berserk(){
+        let thing = new Card(3, "Berserk", "normal", "Warrior", false, 0, 0, 0, 0, 50, 0, "Take damage to increases attack and defense greatly.", ["(you)'s muscles pulsates with rage.", "(you)'s eyes turn bloodshot red."]);
+        thing.effect = function(){
+          this.user.currentHealth -= Math.floor(this.user.totalHealth * 0.1);
+          pushStatus("Attack Buff", Math.floor(this.user.level/1.75), this.user);
+          pushStatus("Defense Buff", Math.floor(this.user.level/1.75), this.user);
+        };
+        return thing;
+      }
+      function Decapitate(){
+        let thing = new Card(3, "Decapitate", "normal", "Warrior", true, 5, 0, 0, 0, 0, 50, "Deal extra damage to damaged enemies.", ["(you) cuts (enemy)'s head.", "(you) swings at (enemy)'s head."]);
+        thing.effect = function(){
+          if(this.target.currentHealth < this.target.totalHealth / 2){
+            this.attack += Math.floor(this.user.currentAttack * 2);
           }
         }
+        return thing;
       }
-    };
-    return thing;
+      function MassiveSword(){
+        let thing = new Card(3, "Massive Sword", "normal", "Warrior", true, 10, 0, 0, 0, 25, 45, "Strike with a massive magic sword.", ["(you)'s sword becomes massive.", "(you)'s strikes with a massive sword."]);
+        thing.effect = function(){
+          pushStatus("Attack Buff", Math.floor(this.user.level/2.5), this.user);
+          this.attack += this.user.currentMagicA;
+        };
+        return thing;
+      }
+    }
+    function rogueCards(){
+      allCards["Cycle"] = Cycle;
+      allCards["Double Strike"] = DoubleStrike;
+      allCards["Theft"] = Theft;
+      //Lvl 3
+      allCards["Assasinate"] = Assasinate;
+      allCards["Spike Trap"] = SpikeTrap;
+      allCards["Conjure C4"] = ConjureC4;
+
+      function Cycle(){
+        let thing = new Card(1, "Cycle", "normal", "Rogue", false, 0, 0, 0, 0, 0, 0, "Cycle through all card slots.", ["(you) takes a moment to prepare.", "(you) shuffles around some equipment.", "(you) looks for (enemy)'s weakness."]);
+        thing.effect = function(){
+          for(let i = 0; i < this.user.slots; i++){
+            setCardAt(i);
+          }
+        };
+        return thing;
+      }
+      function DoubleStrike(){
+        let thing = new Card(1, "Double Strike", "normal", "Rogue", true, 5, 0, 0, 0, 0, 20, "Strike twice at enemy.", ["(you) hits (enemy) twice.", "(you) strikes (enemy) twice."]);
+        thing.effect = function(){
+          this.attack += this.user.currentAttack;
+        };
+        return thing;
+      }
+      function Theft(){
+        let thing = new Card(1, "Theft", "normal", "Rogue", true, 5, 0, 0, 0, 10, 20, "Hit with a chance to steal item.", ["(you) attempts to pocket (enemy).", "(you) attempts to go through (enemy)'s pockets."]);
+        thing.effect = function(){
+          let dude = allItemsCategory["Drop"](this.target.level);
+          if(!dude) dude = allItemsCategory["Drop"](this.target.level);
+          if(!dude) dude = allItemsCategory["Drop"](this.target.level);
+          if(dude){
+            addText("Sucessfully stole " + dude.name + ".");
+            addItemToInventory(dude);
+          } else{
+            addText("Found nothing to steal.");
+          }
+        };
+        return thing;
+      }
+      function Assasinate(){
+        let thing = new Card(3, "Assasinate", "normal", "Rogue", true, 5, 0, 0, 0, 0, 45, "Deal a fatal blow to a dying enemy.", ["(you) slices (enemy)'s throat.", "(you) strikes at (enemy)'s heart."]);
+        thing.effect = function(){
+          if(this.target.currentHealth < this.target.totalHealth/3){
+            this.target.currentHealth = 0;
+          }
+        };
+        return thing;
+      }
+      function SpikeTrap(){
+        let thing = new Card(3, "Spike Trap", "normal", "Rogue", false, 0, 0, 0, 0, 0, 20, "Spike traps that inflict bleed and lowers defense.", ["(you) sets up spike traps.", "(you) scatter spikes around the floor."]);
+        thing.effect = function(){
+          if(this.user == player){
+            for(let i = 0; i < enemies.length; i++){
+              pushStatus("Bleed", Math.floor(this.user.level/3), enemies[i]);
+              pushStatus("Defense Curse", Math.floor(this.user.level/2.5), enemies[i]);
+            }
+          }
+        };
+        return thing;
+      }
+      function ConjureC4(){
+        let thing = new Card(3, "Conjure C4", "normal", "Rogue", false, 0, 0, 0, 0, 75, 0, "A condensed mana C4.", ["(you) conjures a C4 bomb.", "(you) conjures a C4 and hides."]);
+        thing.effect = function(){
+          if(this.user == player){
+            for(let i = 0; i < enemies.length; i++){
+              pushStatus("Burn", Math.floor(this.user.level/3), enemies[i]);
+              enemies[i].currentHealth -= this.user.currentMagicA * 3;
+            }
+          }
+        };
+        return thing;
+      }
+    }
+    function mageCards(){
+      //Lvl 1
+      allCards["Fireball"] = Fireball;
+      allCards["Minor Focus"] = MinorFocus;
+      allCards["Lightning Strike"] = LightningStrike;
+      //Lvl 3
+      allCards["Tsunami"] = Tsunami;
+      allCards["Syphon Life"] = SyphonLife;
+      allCards["Holy Light"] = HolyLight;
+
+      function Fireball(){
+        let thing = new Card(1, "Fireball", "fire", "Mage", true, 0, 3, 0, 0, 60, 0, "A ball of fire with AoE. Inflicts minor Burn.", ["(you) conjures a ball of fire.", "An explosion of fire hits (enemy)."]);
+        thing.effect = function() {
+          pushStatus("Burn", Math.floor(this.user.level/3), this.target);
+          if(this.user == player){
+            for(let i = 0; i < enemies.length; i++){
+              let damage = this.user.currentMagicA + Math.floor(this.user.currentMagicA/2);
+              if(damage < 0) damage = 0;
+              enemies[i].currentHealth -= damage;
+            }
+          }
+        };
+        return thing;
+      }
+      function MinorFocus(){
+        let thing = new Card(1, "Minor Focus", "normal", "Mage", false, 0, 0, 2, 2, 0, 0, "Lose health. Restore mana and stamina. Minor def buff.", ["(you) focuses thought."]);
+        thing.effect = function() {
+          pushStatus("Defense Buff", Math.floor(this.user.level/3), this.user);
+          this.user.currentHealth -= 15;
+    
+          this.user.currentMana += 45;
+          if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
+          this.user.currentStamina += 35;
+          if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+        };
+        return thing;
+      }
+      function LightningStrike(){
+        let thing = new Card(1, "Lightning Strike", "thunder", "Mage", true, 0, 10, 0, 0, 50, 0, "Strike one enemy with lightning.", ["(you) sends a bolt of lightning at (enemy).", "(enemy) gets shocked by (you)"]);
+        thing.effect = function(){
+          this.attack += this.user.currentMagicA;
+        }
+        return thing;
+      }
+      function Tsunami(){
+        let thing = new Card(3, "Tsunami", "water", "Mage", false, 0, 0, 0, 0, 85, 0, "Summon a massive Tsunami.", ["A turbulent tidal wave crashes through.", "(you) summons a massive Tsunami."]);
+        thing.effect = function() {
+          if(this.user == player){
+            for(let i = 0; i < enemies.length; i++){
+              let damage = this.user.currentMagicA * 3;
+              if(damage < 0) damage = 0;
+              enemies[i].currentHealth -= damage;
+            }
+          }
+        };
+        return thing;
+      }
+      function SyphonLife(){
+        let thing = new Card(3, "Syphon Life", "normal", "Mage", true, 0, 10, 0, 0, 75, 0, "Steal health and stamina", ["(you) steal (enemy)'s life.", "(enemy)'s life force seeps into (you)"]);
+        thing.effect = function(){
+          this.attack += this.user.currentMagicA;
+    
+          if(this.target.race.includes("Undead")){
+            addText(this.user.name + " is poisoned attempting to steal Undead blood.");
+            pushStatus("Poison", Math.floor(this.user.level/4), this.user);
+          } else{
+            this.user.currentHealth += Math.floor(this.attack * 2);
+            if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+            this.user.currentStamina += Math.floor(this.attack * 1.5);
+            if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+          }
+        }
+        return thing;
+      }
+      function HolyLight(){
+        let thing = new Card(3, "Holy Light", "light", "Mage", false, 0, 0, 0, 0, 65, 0, "Heals and removes debuffs. Damages undead.", ["Holy light shines through the area.", "A bright warm light engulfs the room."]);
+        thing.effect = function() {
+          addText("The light removes all illness of " + this.user.name + ".");
+          for(let i = this.user.status.length - 1; i >= 0; i--){
+            if(this.user.status[i].type == "Debuff"){
+              this.user.status[i].endEffect();
+              this.user.status.splice(i, 1);
+            }
+          }
+    
+          this.user.currentHealth += Math.floor(this.user.totalHealth * 0.15);
+          if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
+          this.user.currentStamina += Math.floor(this.user.totalStamina * 0.15);
+          if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
+          this.user.currentMana += Math.floor(this.user.totalMana * 0.15);
+          if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
+    
+          if(this.user == player){
+            for(let i = 0; i < enemies.length; i++){
+              if(enemies[i].race.includes("Undead")){
+                let damage = this.user.currentMagicA * 2;
+                if(damage < 0) damage = 0;
+                enemies[i].currentHealth -= damage;
+              }
+            }
+          }
+        };
+        return thing;
+      }
+    }
+
+  allCardsCategory["Job"] = Job;
   }
 
   function Job(job){
@@ -1335,7 +1409,7 @@ function startFloor(floor){
   function loop(){
     if(counter == 800){
       let path = Math.floor(Math.random() * 1000);
-      path = 150;
+      // path = 150;
 
       if(path >= 0 && path < 50){
         counter = 0;
@@ -2070,14 +2144,15 @@ function tutorialBattleInitiate(){
 
   deck = [];
   for(let i = 0; i < 5; i++){
-    pushCard("Heavy Attack", player);
-    pushCard("Blood Strike", player);
+    pushCard("Berserk", player);
+    pushCard("Decapitate", player);
     pushCard("Flame Sword", player);
     pushCard("Cycle", player);
-    pushCard("Double Strike", player);
+    pushCard("Massive Sword", player);
     pushCard("Theft", player);
-    pushCard("Minor Focus", player);
+    pushCard("Conjure C4", player);
     pushCard("Lightning Strike", player);
+    pushCard("Tsunami", player);
   }
   for(let i = 0; i < 3; i++){
     pushCard("Minor Atk. Buff", player);
