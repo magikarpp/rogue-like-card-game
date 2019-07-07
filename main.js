@@ -141,6 +141,8 @@ function testingFunction(){
 
   checkStats();
 
+  current_floor = 3;
+
   startFloor(current_floor);
 }
 
@@ -316,24 +318,170 @@ function initEnemies(){
   initAllEnemies();
 
   function initAllEnemies(){
+    floorOneEnemies();
+    floorThreeEnemies();
+
+    function floorOneEnemies(){
+      allEnemies["Goblin Soldier"] = GoblinSoldier;
+      allEnemies["Small Goblin"] = SmallGoblin;
+      allEnemies["Large Goblin"] = LargeGoblin;
+      allEnemies["Goblin Shaman"] = GoblinShaman;
+      allEnemies["Goblin Warchief"] = GoblinWarchief;
+      allEnemies["Goblin Wolfrider"] = GoblinWolfrider;
+    
+      allEnemies["Small Zombie"] = SmallZombie;
+      allEnemies["Large Zombie"] = LargeZombie;
+      allEnemies["Abomination"] = Abomination;
+      allEnemies["Necromancer"] = Necromancer;
+      allEnemies["Zombie Dragon"] = ZombieDragon;
+
+      function GoblinSoldier(){
+        let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Goblin Soldier", "Goblin", "normal", randomNum(21, 3), randomNum(2, 1), 0, 2, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
+        pushCard("Heavy Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        return dude;
+      }
+      function SmallGoblin(){
+        let dude = new Enemy(1, 10, randomNum(75, 5), 95, "Small Goblin", "Goblin", "normal", randomNum(15, 2), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
+        pushCard("Attack", dude);
+        return dude;
+      }
+      function LargeGoblin(){
+        let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Large Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
+        pushCard("Heavy Attack", dude);
+        pushCard("Attack", dude);
+        return dude;
+      }
+      function GoblinShaman(){
+        let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Shaman", "Goblin", "normal", randomNum(18, 2), 1, 1, 0, 3, [], ["A Goblin Shaman teleports in front you.", "A Goblin Shaman appears before you."], [], ["Goblin Shaman vanishes."]);
+        pushCard("Attack", dude);
+        pushCard("Minor Def. Buff", dude);
+        pushCard("Minor Atk. Buff", dude);
+        pushCard("Small Energy Ball", dude);
+        return dude;
+      }
+      function GoblinWolfrider(){
+        let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Wolfrider", "Goblin", "normal", randomNum(28, 3), randomNum(3, 1), 0, 1, 0, [], ["You spot a goblin riding a wolf.", "A Goblin Wolfrider appears before you."], [], ["Goblin Wolfrider rides away."]);
+        pushCard("Attack", dude);
+        pushCard("Bite", dude);
+        pushCard("Bite", dude);
+        pushCard("Bite", dude);
+        pushCard("Roar", dude);
+        return dude;
+      }
+      function GoblinWarchief(){
+        let dude = new Enemy(1, 60, randomNum(1000, 50), 100, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(55, 3), randomNum(8, 1), 0, 3, 0, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
+        pushCard("Heavy Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Roar", dude);
+        pushCard("Attack", dude);
+        return dude;
+      }
+    
+      function SmallZombie(){
+        let dude = new Enemy(1, 14, randomNum(105, 5), 80, "Small Zombie", "Undead Zombie", "normal", randomNum(22, 3), 1, 0, -1, 0, [], ["You smell a rotten stench approach you.", "A Small Zombie stands in your way."], [], ["Small Zombie collapses."]);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Bite", dude);
+        return dude;
+      }
+      function LargeZombie(){
+        let dude = new Enemy(1, 20, randomNum(145, 5), 15, "Large Zombie", "Undead Zombie", "normal", randomNum(28, 3), randomNum(2, 1), 0, 0, 0, [], ["You smell a rotten stench approach you.", "A Large Zombie stands in your way.", "You stumble across a Large Zombie."], [], ["Large Zombie collapses."]);
+        pushCard("Attack", dude);
+        pushCard("Heavy Attack", dude);
+        pushCard("Bite", dude);
+        return dude;
+      }
+      function Abomination(){
+        let dude = new Enemy(1, 25, randomNum(155, 5), 10, "Abomination", "Undead Zombie", "normal", randomNum(40, 5), randomNum(1, 1), 0, 3, 0, [], ["An abomination of an Abomination glares your way.", "What in Abomination?", "An indescribably hideous zombie stands in your way."], [], ["Abomination disinigrates"]);
+        pushCard("Attack", dude);
+        return dude;
+      }
+      function Necromancer(){
+        let dude = new Enemy(1, 28, randomNum(175, 5), 10, "Necromancer", "Zombie", "normal", randomNum(18, 2), 1, randomNum(3, 1), 0, 3, [], ["A Necromancer flaunts its staff at you.", "You hear a Necromancer's chant nearby.", "Necromancer summons zombies."], [], ["Necromancer collapses."]);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Minor Def. Curse", dude);
+        pushCard("Minor Atk. Curse", dude);
+    
+        return dude;
+      }
+      function ZombieDragon(){
+        let dude = new Enemy(1, 70, randomNum(1020, 50), 100, "Zombie Dragon", "Undead Dragon Zombie-Boss", "normal", randomNum(55, 3), randomNum(4, 1), randomNum(4, 1), 2, 4, [], ["Zombie Dragon roars at your appearance.", "Zombie Dragon glares towards you.", "You spot a rotting Zombie Dragon."], [], ["Zombie Dragon falls to its demise."]);
+        pushCard("Bite", dude);
+        pushCard("Bite", dude);
+        pushCard("Bite", dude);
+        pushCard("Rest", dude);
+        pushCard("Roar", dude);
+        pushCard("Poison Breath", dude);
+        return dude;
+      }
+    }
+    function floorThreeEnemies(){
+      allEnemies["Elf Warrior"] = ElfWarrior;
+      allEnemies["Dark Elf"] = DarkElf;
+      allEnemies["Elf Student"] = ElfStudent;
+      allEnemies["Elf Ravager"] = ElfRavager;
+      allEnemies["Elf Tyrant"] = ElfTyrant;
+
+      function ElfWarrior(){
+        let dude = new Enemy(3, 24, randomNum(185, 5), 80, "Elf Warrior", "Elf", "normal", randomNum(34, 2), 2, 1, 2, 1, [], ["An Elf stands in your way.", "An Elf catches you in its sight."], [], ["Elf falls to the ground."]);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Minor Atk. Buff", dude);
+        pushCard("Minor Def. Buff", dude);
+        return dude;
+      }
+      function DarkElf(){
+        let dude = new Enemy(3, 26, randomNum(195, 5), 80, "Dark Elf", "Elf", "normal", randomNum(28, 2), 1, 2, 1, 2, [], ["A Dark Elf stands in your way.", "A Dark Elf appears out of nowhere."], [], ["Dark Elf lets out a scream."]);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Small Energy Ball", dude);
+        pushCard("Minor Atk. Buff", dude);
+        pushCard("Minor Def. Buff", dude);
+        return dude;
+      }
+      function ElfStudent(){
+        let dude = new Enemy(3, 22, randomNum(175, 5), 75, "Elf Student", "Elf", "normal", randomNum(28, 2), 0, 0, 1, 1, [], ["A smaller Elf stands in your way..", "You see an Elf reading a book."], [], ["Elf Student falls to the ground."]);
+        pushCard("Attack", dude);
+        pushCard("Small Energy Ball", dude);
+        return dude;
+      }
+      function ElfRavager(){
+        let dude = new Enemy(3, 28, randomNum(200, 5), 45, "Elf Ravager", "Elf", "normal", randomNum(38, 2), 3, 2, 2, 2, [], ["An Elf Ravager Screams towards you.", "You see an Elf Ravager eating a corpse."], [], ["Elf Ravager breaks down to its knees."]);
+        pushCard("Attack", dude);
+        pushCard("Attack", dude);
+        pushCard("Bite", dude);
+        pushCard("Bite", dude);
+        pushCard("Roar", dude);
+        return dude;
+      }
+      function ElfTyrant(){
+        let dude = new Enemy(1, 100, randomNum(1500, 100), 100, "Elf Tyrant", "Elf-Boss", "normal", randomNum(95, 3), randomNum(12, 1), 6, 5, 5, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
+        pushCard("Heavy Attack", dude);
+        pushCard("Flame Sword", dude);
+        pushCard("Lightning Strike", dude);
+        pushCard("Fireball", dude);
+        pushCard("Roar", dude);
+        pushCard("Attack", dude);
+        return dude;
+      }
+    }
+
+    allEnemies["Flame Dragon"] = FlameDragon;
     allEnemiesCategory["Level"] = levelTheme;
     allEnemiesCategory["Race"] = Race;
     allEnemiesCategory["Count"] = Count;
-  
-    allEnemies["Flame Dragon"] = FlameDragon;
-  
-    allEnemies["Goblin Soldier"] = GoblinSoldier;
-    allEnemies["Small Goblin"] = SmallGoblin;
-    allEnemies["Large Goblin"] = LargeGoblin;
-    allEnemies["Goblin Shaman"] = GoblinShaman;
-    allEnemies["Goblin Warchief"] = GoblinWarchief;
-    allEnemies["Goblin Wolfrider"] = GoblinWolfrider;
-  
-    allEnemies["Small Zombie"] = SmallZombie;
-    allEnemies["Large Zombie"] = LargeZombie;
-    allEnemies["Abomination"] = Abomination;
-    allEnemies["Necromancer"] = Necromancer;
-    allEnemies["Zombie Dragon"] = ZombieDragon;
+
   }
 
   function FlameDragon(){
@@ -345,89 +493,6 @@ function initEnemies(){
     pushCard("Bite", dude);
     pushCard("Bite", dude);
     pushCard("Attack", dude);
-    return dude;
-  }
-
-  function GoblinSoldier(){
-    let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Goblin Soldier", "Goblin", "normal", randomNum(21, 3), randomNum(2, 1), 0, 2, 0, [], ["A Goblin Solider catches you in it's gaze.", "You spot a Goblin Solider in the distance."], [], ["Goblin Soldier falls to the ground."]);
-    pushCard("Heavy Attack", dude);
-    pushCard("Attack", dude);
-    pushCard("Attack", dude);
-    return dude;
-  }
-  function SmallGoblin(){
-    let dude = new Enemy(1, 10, randomNum(75, 5), 95, "Small Goblin", "Goblin", "normal", randomNum(15, 2), randomNum(2, 1), 0, 0, 0, [], ["You see a small pair of red eyes lurking forward.", "A Small Goblin dashes towards you.", "A Small Goblin stands in your way."], [], ["Small Goblin collapses."]);
-    pushCard("Attack", dude);
-    return dude;
-  }
-  function LargeGoblin(){
-    let dude = new Enemy(1, 18, randomNum(125, 5), 3, "Large Goblin", "Goblin", "normal", randomNum(25, 5), randomNum(2, 1), 0, 0, 0, [], ["You see a large pair of red eyes lurking forward.", "A Large Goblin dashes towards you.", "A Large Goblin stands in your way."], [], ["Large Goblin can no longer move."]);
-    pushCard("Heavy Attack", dude);
-    pushCard("Attack", dude);
-    return dude;
-  }
-  function GoblinShaman(){
-    let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Shaman", "Goblin", "normal", randomNum(18, 2), 1, 1, 0, 3, [], ["A Goblin Shaman teleports in front you.", "A Goblin Shaman appears before you."], [], ["Goblin Shaman vanishes."]);
-    pushCard("Attack", dude);
-    pushCard("Minor Def. Buff", dude);
-    pushCard("Minor Atk. Buff", dude);
-    pushCard("Small Energy Ball", dude);
-    return dude;
-  }
-  function GoblinWolfrider(){
-    let dude = new Enemy(1, 20, randomNum(155, 5), 2, "Goblin Wolfrider", "Goblin", "normal", randomNum(28, 3), randomNum(3, 1), 0, 1, 0, [], ["You spot a goblin riding a wolf.", "A Goblin Wolfrider appears before you."], [], ["Goblin Wolfrider rides away."]);
-    pushCard("Attack", dude);
-    pushCard("Bite", dude);
-    pushCard("Bite", dude);
-    pushCard("Bite", dude);
-    pushCard("Roar", dude);
-    return dude;
-  }
-  function GoblinWarchief(){
-    let dude = new Enemy(1, 60, randomNum(1000, 50), 100, "Goblin Warchief", "Goblin-Boss", "normal", randomNum(55, 3), randomNum(8, 1), 0, 3, 0, [], ["Goblin Warchief screeches out at your sight.", "You spot a Goblin Warchief eating a small goblin.", "The tattoos on the Goblin Warchief kinda look cool."], [], ["Goblin Warchief falls to the ground."]);
-    pushCard("Heavy Attack", dude);
-    pushCard("Heavy Attack", dude);
-    pushCard("Heavy Attack", dude);
-    pushCard("Roar", dude);
-    pushCard("Attack", dude);
-    return dude;
-  }
-
-  function SmallZombie(){
-    let dude = new Enemy(1, 14, randomNum(105, 5), 80, "Small Zombie", "Undead Zombie", "normal", randomNum(22, 3), 1, 0, -1, 0, [], ["You smell a rotten stench approach you.", "A Small Zombie stands in your way."], [], ["Small Zombie collapses."]);
-    pushCard("Attack", dude);
-    pushCard("Attack", dude);
-    pushCard("Bite", dude);
-    return dude;
-  }
-  function LargeZombie(){
-    let dude = new Enemy(1, 20, randomNum(145, 5), 15, "Large Zombie", "Undead Zombie", "normal", randomNum(28, 3), randomNum(2, 1), 0, 0, 0, [], ["You smell a rotten stench approach you.", "A Large Zombie stands in your way.", "You stumble across a Large Zombie."], [], ["Large Zombie collapses."]);
-    pushCard("Attack", dude);
-    pushCard("Heavy Attack", dude);
-    pushCard("Bite", dude);
-    return dude;
-  }
-  function Abomination(){
-    let dude = new Enemy(1, 25, randomNum(155, 5), 10, "Abomination", "Undead Zombie", "normal", randomNum(40, 5), randomNum(1, 1), 0, 3, 0, [], ["An abomination of an Abomination glares your way.", "What in Abomination?", "An indescribably hideous zombie stands in your way."], [], ["Abomination disinigrates"]);
-    pushCard("Attack", dude);
-    return dude;
-  }
-  function Necromancer(){
-    let dude = new Enemy(1, 28, randomNum(175, 5), 10, "Necromancer", "Zombie", "normal", randomNum(18, 2), 1, randomNum(3, 1), 0, 3, [], ["A Necromancer flaunts its staff at you.", "You hear a Necromancer's chant nearby.", "Necromancer summons zombies."], [], ["Necromancer collapses."]);
-    pushCard("Small Energy Ball", dude);
-    pushCard("Minor Def. Curse", dude);
-    pushCard("Minor Atk. Curse", dude);
-
-    return dude;
-  }
-  function ZombieDragon(){
-    let dude = new Enemy(1, 70, randomNum(1020, 50), 100, "Zombie Dragon", "Undead Dragon Zombie-Boss", "normal", randomNum(55, 3), randomNum(4, 1), randomNum(4, 1), 2, 4, [], ["Zombie Dragon roars at your appearance.", "Zombie Dragon glares towards you.", "You spot a rotting Zombie Dragon."], [], ["Zombie Dragon falls to its demise."]);
-    pushCard("Bite", dude);
-    pushCard("Bite", dude);
-    pushCard("Bite", dude);
-    pushCard("Rest", dude);
-    pushCard("Roar", dude);
-    pushCard("Poison Breath", dude);
     return dude;
   }
 
@@ -455,6 +520,7 @@ function initEnemies(){
   function Count(race){
     if(race == "Goblin") return 3;
     else if(race == "Zombie") return 2;
+    else if(race == "Elf") return 3;
     else return 2;
   }
 
@@ -830,11 +896,11 @@ function initCards(){
         }
       }
 
-      this.user.currentHealth += 30;
+      this.user.currentHealth += Math.floor(this.user.totalHealth * 0.15);
       if(this.user.currentHealth > this.user.totalHealth) this.user.currentHealth = this.user.totalHealth;
-      this.user.currentStamina += 30;
+      this.user.currentStamina += Math.floor(this.user.totalStamina * 0.15);
       if(this.user.currentStamina > this.user.totalStamina) this.user.currentStamina = this.user.totalStamina;
-      this.user.currentMana += 20;
+      this.user.currentMana += Math.floor(this.user.totalMana * 0.15);
       if(this.user.currentMana > this.user.totalMana) this.user.currentMana = this.user.totalMana;
 
       if(this.user == player){
@@ -1269,7 +1335,7 @@ function startFloor(floor){
   function loop(){
     if(counter == 800){
       let path = Math.floor(Math.random() * 1000);
-      path = 250;
+      path = 150;
 
       if(path >= 0 && path < 50){
         counter = 0;
