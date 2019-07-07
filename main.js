@@ -1705,11 +1705,11 @@ function startFloor(floor){
 
             if(player.gold > temp_cost){
               player.gold -= temp_cost;
-              player.currentHealth += 40;
+              player.currentHealth += Math.floor(player.totalHealth * 0.25);
               if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
-              player.currentStamina += 40;
+              player.currentStamina += Math.floor(player.totalStamina * 0.25);
               if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
-              player.currentMana += 40;
+              player.currentMana += Math.floor(player.totalMana * 0.25);
               if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
               temp_used = true;
               checkStats();
@@ -2837,10 +2837,14 @@ function endBattle(result){
     } else result_text += result_loot[i] + ", ";
   }
 
+  let gg = false;
+
   if(result == "died"){
     result_text = "You died.";
+    gg = true;
   } else if(result == "cards"){
     result_text = "You ran out of cards.";
+    gg = true;
   }
 
   addText(result_text);
@@ -2865,18 +2869,20 @@ function endBattle(result){
         setTimeout(loop, 0);
       } else{
         let points = 0;
-        while(player.currentExp >= player.totalExp){
-          player.currentHealth += Math.floor(player.totalHealth/2);
-          if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
-          player.currentStamina += Math.floor(player.totalStamina/2);
-          if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
-          player.currentMana += Math.floor(player.totalMana/2);
-          if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
+        if(!gg){
+          while(player.currentExp >= player.totalExp){
+            player.currentHealth += Math.floor(player.totalHealth/2);
+            if(player.currentHealth > player.totalHealth) player.currentHealth = player.totalHealth;
+            player.currentStamina += Math.floor(player.totalStamina/2);
+            if(player.currentStamina > player.totalStamina) player.currentStamina = player.totalStamina;
+            player.currentMana += Math.floor(player.totalMana/2);
+            if(player.currentMana > player.totalMana) player.currentMana = player.totalMana;
 
-          points++;
-          player.level++;
-          player.currentExp -= player.totalExp;
-          player.totalExp += player.totalExp/2;
+            points++;
+            player.level++;
+            player.currentExp -= player.totalExp;
+            player.totalExp += player.totalExp/2;
+          }
         }
 
         checkStats();
